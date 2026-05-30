@@ -720,143 +720,201 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// ─── BLUETOOTH ────────────────────────────────────────────
-let btDevice=null,btChar=null,btState='disconnected';
+// ─── BLUETOOTH + PROTOCOLO NIIMBOT ──────────────────────────
+// Protocolo baseado em: https://printers.niim.blue/interfacing/proto/
+// Sequência D110/B21_V1 compatível com XD 210X
 
-function setBtState(s){
-  btState=s;
-  const dot=document.getElementById('bt-dot');
-  if(!dot) return;
-  dot.className='bt-dot'+(s==='connected'?' connected':s==='connecting'?' connecting':'');
-  document.getElementById('bt-btn').title=s==='connected'?'Impressora conectada — clique para desconectar':s==='connecting'?'Conectando…':'Conectar impressora';
+const SERVICE_UUID = 'e7810a71-73ae-499d-8c15-faa9aef0c3f2';
+const CHAR_UUID    = 'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f';
+
+let btDevice = null, btChar = null, btState = 'disconnected';
+
+function setBtState(s) {
+  btState = s;
+  const dot = document.getElementById('bt-dot');
+  if (!dot) return;
+  dot.className = 'bt-dot' + (s==='connected'?' connected': s==='connecting'?' connecting':'');
+  document.getElementById('bt-btn').title =
+    s==='connected' ? 'Impressora conectada — clique para desconectar' :
+    s==='connecting'? 'Conectando…' : 'Conectar impressora';
 }
 
-async function toggleBluetooth(){
-  if(btState==='connected'){
-    try{ await btDevice?.gatt?.disconnect(); }catch(e){}
-    btDevice=null; btChar=null; setBtState('disconnected'); toast('Impressora desconectada'); return;
+async function toggleBluetooth() {
+  if (btState === 'connected') {
+    try { await btDevice?.gatt?.disconnect(); } catch(e) {}
+    btDevice = null; btChar = null; setBtState('disconnected');
+    toast('Impressora desconectada'); return;
   }
-  if(!navigator.bluetooth){ toast('Use o Chrome para conectar a impressora.'); return; }
+  if (!navigator.bluetooth) { toast('Use o Chrome para conectar a impressora.'); return; }
   try {
     setBtState('connecting');
-    const knownUUIDs=['e7810a71-73ae-499d-8c15-faa9aef0c3f2','49535343-fe7d-4ae5-8fa9-9fafd205e455','0000ff00-0000-1000-8000-00805f9b34fb'];
-    btDevice=await navigator.bluetooth.requestDevice({ acceptAllDevices:true, optionalServices:knownUUIDs });
-    btDevice.addEventListener('gattserverdisconnected',()=>{ btDevice=null; btChar=null; setBtState('disconnected'); toast('Impressora desconectada'); });
-    const server=await btDevice.gatt.connect();
-    let foundChar=null;
-    for(const uuid of knownUUIDs){
-      try{
-        const svc=await server.getPrimaryService(uuid);
-        const chars=await svc.getCharacteristics();
-        foundChar=chars.find(c=>c.properties.write||c.properties.writeWithoutResponse);
-        if(foundChar){ console.log('BT char encontrada, serviço:',uuid); break; }
-      }catch(e){ continue; }
-    }
-    if(!foundChar){
-      try{
-        const allSvcs=await server.getPrimaryServices();
-        console.log('BT serviços disponíveis:',allSvcs.map(s=>s.uuid));
-        for(const svc of allSvcs){
-          const chars=await svc.getCharacteristics();
-          foundChar=chars.find(c=>c.properties.write||c.properties.writeWithoutResponse);
-          if(foundChar){ console.log('BT char via fallback, serviço:',svc.uuid); break; }
-        }
-      }catch(e){ console.warn('getPrimaryServices falhou:',e); }
-    }
-    btChar=foundChar;
+    btDevice = await navigator.bluetooth.requestDevice({
+      filters: [{ services: [SERVICE_UUID] }],
+      optionalServices: [SERVICE_UUID]
+    });
+    btDevice.addEventListener('gattserverdisconnected', () => {
+      btDevice = null; btChar = null; setBtState('disconnected'); toast('Impressora desconectada');
+    });
+    const server = await btDevice.gatt.connect();
+    const svc    = await server.getPrimaryService(SERVICE_UUID);
+    btChar       = await svc.getCharacteristic(CHAR_UUID);
+    await btChar.startNotifications();
+    btChar.addEventListener('characteristicvaluechanged', e => {
+      const d = new Uint8Array(e.target.value.buffer);
+      console.log('BT<', Array.from(d).map(b=>b.toString(16).padStart(2,'0')).join(' '));
+    });
     setBtState('connected');
-    toast(btChar?'✓ Impressora pronta: '+(btDevice.name||'Niimbot'):'⚠️ Conectado mas sem canal de impressão (F12)');
-  }catch(e){
+    toast('✓ Impressora pronta: ' + (btDevice.name || 'Niimbot'));
+  } catch(e) {
     setBtState('disconnected');
-    if(e.name!=='NotFoundError') toast('Erro ao conectar: '+e.message);
+    if (e.name !== 'NotFoundError') toast('Erro ao conectar: ' + e.message);
+    console.error('BT erro:', e);
   }
 }
 
-// ─── PRINT ────────────────────────────────────────────────
-let printOrderId=null;
-const LABEL_W=400,LABEL_H=320;
+// Monta pacote: 55 55 [CMD] [LEN] [DATA...] [XOR] AA AA
+function makePacket(cmd, data) {
+  const len = data.length;
+  let xor = cmd ^ len;
+  for (const b of data) xor ^= b;
+  const pkt = new Uint8Array(6 + len);
+  pkt[0]=0x55; pkt[1]=0x55; pkt[2]=cmd; pkt[3]=len;
+  for (let i=0; i<len; i++) pkt[4+i] = data[i];
+  pkt[4+len] = xor; pkt[5+len] = 0xAA;
+  return pkt;
+}
 
-async function labelToImageData(sabor,prodDateStr){
-  const valDate=fmtDateBR(addDays(prodDateStr,7));
-  const prodFmt=fmtDateBR(prodDateStr);
-  const canvas=document.createElement('canvas');
-  canvas.width=LABEL_W; canvas.height=LABEL_H;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle='#fff'; ctx.fillRect(0,0,LABEL_W,LABEL_H);
-  ctx.fillStyle='#000';
-  ctx.font='bold 36px monospace'; ctx.textAlign='center';
-  ctx.fillText(`MAIONESE DA SOL (${sabor})`,LABEL_W/2,80);
-  ctx.fillRect(20,100,LABEL_W-40,2);
-  ctx.font='28px monospace'; ctx.textAlign='left';
-  ctx.fillText(`PRODUCAO: ${prodFmt}`,30,160);
-  ctx.fillText(`VALIDADE: ${valDate}`,30,210);
+// Envia em chunks de 20 bytes (limite BLE)
+async function sendPacket(pkt) {
+  if (!btChar) throw new Error('Sem conexão Bluetooth');
+  console.log('BT>', Array.from(pkt).map(b=>b.toString(16).padStart(2,'0')).join(' '));
+  const CHUNK = 20;
+  for (let i=0; i<pkt.length; i+=CHUNK) {
+    await btChar.writeValueWithoutResponse(pkt.slice(i, i+CHUNK));
+    await delay(8);
+  }
+}
+
+const delay = ms => new Promise(r => setTimeout(r, ms));
+
+// IDs corretos do protocolo Niimbot
+const CMD = {
+  PrintStart:     0x01,
+  PageStart:      0x03,
+  SetPageSize:    0x13,
+  SetDensity:     0x21,
+  SetLabelType:   0x23,
+  PrintBitmapRow: 0x85,
+  PrintEmptyRow:  0x84,
+  PageEnd:        0xe3,
+  PrintEnd:       0xf3,
+};
+
+async function cmd_SetDensity(d=3)    { await sendPacket(makePacket(CMD.SetDensity,    [d]));     await delay(60); }
+async function cmd_SetLabelType(t=1)  { await sendPacket(makePacket(CMD.SetLabelType,  [t]));     await delay(60); }
+async function cmd_PrintStart()       { await sendPacket(makePacket(CMD.PrintStart,    [0x01]));  await delay(120); }
+async function cmd_PageStart()        { await sendPacket(makePacket(CMD.PageStart,     [0x01]));  await delay(60); }
+async function cmd_SetPageSize(r,c)   { await sendPacket(makePacket(CMD.SetPageSize,   [r>>8,r&0xFF,c>>8,c&0xFF])); await delay(120); }
+async function cmd_PageEnd()          { await sendPacket(makePacket(CMD.PageEnd,        [0x01]));  await delay(250); }
+async function cmd_PrintEnd()         { await sendPacket(makePacket(CMD.PrintEnd,       [0x01]));  await delay(250); }
+
+async function cmd_BitmapRow(rowNum, rowData) {
+  const d = new Uint8Array(6 + rowData.length);
+  d[0]=rowNum>>8; d[1]=rowNum&0xFF; d[2]=1; // row, repeat
+  d[3]=0; d[4]=0; d[5]=0;                   // black pixel count (zeros OK)
+  d.set(rowData, 6);
+  await sendPacket(makePacket(CMD.PrintBitmapRow, d));
+}
+
+async function cmd_EmptyRow(rowNum) {
+  await sendPacket(makePacket(CMD.PrintEmptyRow, [rowNum>>8, rowNum&0xFF, 1]));
+}
+
+// ─── GERAÇÃO DA ETIQUETA ──────────────────────────────────
+// XD 210X: 50mm×30mm @203dpi ≈ 400×240px | printhead = 384px cols
+const PRINT_COLS = 384;
+const PRINT_ROWS = 240;
+
+async function renderLabelCanvas(sabor, prodDateStr) {
+  const valDate = fmtDateBR(addDays(prodDateStr, 7));
+  const prodFmt = fmtDateBR(prodDateStr);
+  const canvas  = document.createElement('canvas');
+  canvas.width  = PRINT_COLS; canvas.height = PRINT_ROWS;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,PRINT_COLS,PRINT_ROWS);
+  ctx.fillStyle = '#000';
+  ctx.font = 'bold 30px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('MAIONESE DA SOL', PRINT_COLS/2, 42);
+  ctx.fillText('(' + sabor + ')', PRINT_COLS/2, 78);
+  ctx.fillRect(10, 90, PRINT_COLS-20, 2);
+  ctx.font = '25px monospace'; ctx.textAlign = 'left';
+  ctx.fillText('PRODUCAO: ' + prodFmt, 14, 135);
+  ctx.fillText('VALIDADE: ' + valDate,  14, 172);
   return canvas;
 }
 
-function canvasToBitmap(canvas){
-  const ctx=canvas.getContext('2d');
-  const imgData=ctx.getImageData(0,0,canvas.width,canvas.height);
-  const pixels=imgData.data;
-  const w=canvas.width,h=canvas.height;
-  const rowBytes=Math.ceil(w/8);
-  const buf=new Uint8Array(h*rowBytes);
-  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
-    const idx=(y*w+x)*4;
-    const bright=pixels[idx]*0.299+pixels[idx+1]*0.587+pixels[idx+2]*0.114;
-    if(bright<128) buf[y*rowBytes+Math.floor(x/8)]|=(0x80>>(x%8));
+function canvasTo1bit(canvas) {
+  const ctx      = canvas.getContext('2d');
+  const px       = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  const rowBytes = Math.ceil(canvas.width/8);
+  const buf      = new Uint8Array(canvas.height * rowBytes);
+  for (let y=0; y<canvas.height; y++) {
+    for (let x=0; x<canvas.width; x++) {
+      const i = (y*canvas.width+x)*4;
+      if (px[i]*0.299 + px[i+1]*0.587 + px[i+2]*0.114 < 128)
+        buf[y*rowBytes + Math.floor(x/8)] |= (0x80 >> (x%8));
+    }
   }
   return buf;
 }
 
-function niimbotPacket(cmd,data){
-  const len=data.length; let cs=cmd^len;
-  for(const b of data) cs^=b;
-  const pkt=new Uint8Array(6+len);
-  pkt[0]=0x55; pkt[1]=0x55; pkt[2]=cmd; pkt[3]=len;
-  for(let i=0;i<len;i++) pkt[4+i]=data[i];
-  pkt[4+len]=cs; pkt[5+len]=0xAA;
-  return pkt;
-}
+async function printLabel(sabor, prodDateStr) {
+  const canvas   = await renderLabelCanvas(sabor, prodDateStr);
+  const bitmap   = canvasTo1bit(canvas);
+  const rows     = PRINT_ROWS;
+  const cols     = PRINT_COLS;
+  const rowBytes = Math.ceil(cols/8);
 
-async function sendPacket(data){
-  if(!btChar) return;
-  if(btChar.properties.writeWithoutResponse) await btChar.writeValueWithoutResponse(data);
-  else await btChar.writeValue(data);
-}
+  console.log('Print:', cols+'x'+rows+'px');
 
-async function printLabel(sabor,prodDateStr){
-  const canvas=await labelToImageData(sabor,prodDateStr);
-  const bitmap=canvasToBitmap(canvas);
-  const w=canvas.width,h=canvas.height,rowBytes=Math.ceil(w/8);
-  await sendPacket(niimbotPacket(0x1A,[0,w>>8,w&0xFF,0,h>>8,h&0xFF]));
-  await new Promise(r=>setTimeout(r,100));
-  await sendPacket(niimbotPacket(0x15,[0,1]));
-  await new Promise(r=>setTimeout(r,50));
-  for(let y=0;y<h;y++){
-    const row=bitmap.slice(y*rowBytes,(y+1)*rowBytes);
-    const data=new Uint8Array(3+rowBytes);
-    data[0]=y>>8; data[1]=y&0xFF; data[2]=1; data.set(row,3);
-    await sendPacket(niimbotPacket(0x85,data));
-    if(y%20===0) await new Promise(r=>setTimeout(r,10));
+  await cmd_SetDensity(3);
+  await cmd_SetLabelType(1);
+  await cmd_PrintStart();
+  await cmd_PageStart();
+  await cmd_SetPageSize(rows, cols);
+
+  for (let y=0; y<rows; y++) {
+    const row = bitmap.slice(y*rowBytes, (y+1)*rowBytes);
+    if (row.some(b => b !== 0)) await cmd_BitmapRow(y, row);
+    else await cmd_EmptyRow(y);
+    if (y % 30 === 0) await delay(20);
   }
-  await sendPacket(niimbotPacket(0xE3,[0,1]));
+
+  await cmd_PageEnd();
+  await cmd_PrintEnd();
 }
 
-function getLabelTypes(order){
-  const map={};
-  for(const item of order.items){ const t=item.prod.toLowerCase().includes('frango')?'frango':'legumes'; map[t]=(map[t]||0)+item.qty; }
+// ─── PRINT MODAL ─────────────────────────────────────────
+let printOrderId = null;
+
+function getLabelTypes(order) {
+  const map = {};
+  for (const item of order.items) {
+    const t = item.prod.toLowerCase().includes('frango') ? 'frango' : 'legumes';
+    map[t] = (map[t]||0) + item.qty;
+  }
   return Object.entries(map).map(([type,qty])=>({type,qty}));
 }
 
-function renderLabelPreviews(prodDateStr){
-  const order=orders.find(x=>x.id===printOrderId);
-  if(!order) return;
-  const container=document.getElementById('label-previews');
-  if(!prodDateStr){ container.innerHTML='<p style="font-size:13px;color:var(--mt);text-align:center">Selecione a data de produção.</p>'; return; }
-  const valDate=fmtDateBR(addDays(prodDateStr,7));
-  const prodFmt=fmtDateBR(prodDateStr);
-  container.innerHTML=getLabelTypes(order).map(({type,qty})=>{
-    const sabor=type==='frango'?'FRANGO':'LEGUMES';
+function renderLabelPreviews(prodDateStr) {
+  const order = orders.find(x=>x.id===printOrderId);
+  if (!order) return;
+  const container = document.getElementById('label-previews');
+  if (!prodDateStr) { container.innerHTML='<p style="font-size:13px;color:var(--mt);text-align:center">Selecione a data de produção.</p>'; return; }
+  const valDate = fmtDateBR(addDays(prodDateStr,7));
+  const prodFmt = fmtDateBR(prodDateStr);
+  container.innerHTML = getLabelTypes(order).map(({type,qty}) => {
+    const sabor = type==='frango' ? 'FRANGO' : 'LEGUMES';
     return `<div class="label-card">
       <div class="label-card-hdr">Etiqueta — ${sabor} · <strong>${qty}×</strong></div>
       <div class="label-visual">
@@ -868,59 +926,65 @@ function renderLabelPreviews(prodDateStr){
   }).join('');
 }
 
-function showPrintModal(orderId){
-  printOrderId=orderId;
-  const today=new Date().toISOString().split('T')[0];
-  document.getElementById('prod-date').value=today;
+function showPrintModal(orderId) {
+  printOrderId = orderId;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('prod-date').value = today;
   renderLabelPreviews(today);
   document.getElementById('modal-print').classList.add('open');
 }
-function closePrintModal(){ document.getElementById('modal-print').classList.remove('open'); printOrderId=null; }
-document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('prod-date').addEventListener('change',function(){ renderLabelPreviews(this.value); });
+function closePrintModal() { document.getElementById('modal-print').classList.remove('open'); printOrderId = null; }
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('prod-date').addEventListener('change', function(){ renderLabelPreviews(this.value); });
 });
 
-async function executePrint(){
-  const prodDateStr=document.getElementById('prod-date').value;
-  if(!prodDateStr){ toast('Informe a data de produção'); return; }
-  const order=orders.find(x=>x.id===printOrderId);
-  if(!order) return;
-  const types=getLabelTypes(order);
-  if(btState!=='connected'){
-    const valDate=fmtDateBR(addDays(prodDateStr,7));
-    const prodFmt=fmtDateBR(prodDateStr);
-    const labelsHtml=types.flatMap(({type,qty})=>{
-      const sabor=type==='frango'?'FRANGO':'LEGUMES';
-      return Array.from({length:qty},()=>`<div style="width:188px;height:151px;border:1px solid #000;padding:8px;font-family:'Courier New',monospace;box-sizing:border-box;page-break-after:always;display:flex;flex-direction:column;justify-content:center;">
-        <div style="font-size:11px;font-weight:700;text-align:center;border-bottom:1px solid #000;padding-bottom:4px;margin-bottom:6px;">MAIONESE DA SOL (${sabor})</div>
-        <div style="font-size:10px;margin:2px 0;">DATA DE PRODUCAO: <b>${prodFmt}</b></div>
-        <div style="font-size:10px;margin:2px 0;">DATA DE VALIDADE: <b>${valDate}</b></div>
-      </div>`);
+async function executePrint() {
+  const prodDateStr = document.getElementById('prod-date').value;
+  if (!prodDateStr) { toast('Informe a data de produção'); return; }
+  const order = orders.find(x=>x.id===printOrderId);
+  if (!order) return;
+  const types = getLabelTypes(order);
+
+  // Sem Bluetooth: fallback para janela de impressão
+  if (btState !== 'connected') {
+    const valDate = fmtDateBR(addDays(prodDateStr,7));
+    const prodFmt = fmtDateBR(prodDateStr);
+    const labelsHtml = types.flatMap(({type,qty}) => {
+      const sabor = type==='frango' ? 'FRANGO' : 'LEGUMES';
+      return Array.from({length:qty}, () =>
+        `<div style="width:188px;height:120px;border:1px solid #000;padding:8px;font-family:'Courier New',monospace;box-sizing:border-box;page-break-after:always;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-size:10px;font-weight:700;text-align:center;border-bottom:1px solid #000;padding-bottom:3px;margin-bottom:5px;">MAIONESE DA SOL (${sabor})</div>
+          <div style="font-size:9px;margin:2px 0;">PRODUCAO: <b>${prodFmt}</b></div>
+          <div style="font-size:9px;margin:2px 0;">VALIDADE: <b>${valDate}</b></div>
+        </div>`
+      );
     }).join('');
-    const w=window.open('','_blank','width=400,height=600');
+    const w = window.open('','_blank','width=400,height=500');
     w.document.write(`<html><head><title>Etiquetas</title><style>body{margin:8px;background:#fff}@media print{body{margin:0}}</style></head><body>${labelsHtml}<script>window.onload=()=>window.print();<\/script></body></html>`);
     w.document.close();
     closePrintModal(); return;
   }
-  if(!btChar){ toast('⚠️ Canal de impressão não encontrado. Reconecte o Bluetooth.'); return; }
-  const btn=document.getElementById('btn-do-print');
-  btn.textContent='⏳ Imprimindo…'; btn.disabled=true;
-  try{
-    let total=0;
-    for(const {type,qty} of types){
-      const sabor=type==='frango'?'FRANGO':'LEGUMES';
-      for(let i=0;i<qty;i++){
-        await printLabel(sabor,prodDateStr);
-        await new Promise(r=>setTimeout(r,400));
+
+  const btn = document.getElementById('btn-do-print');
+  btn.textContent = '⏳ Imprimindo…'; btn.disabled = true;
+  try {
+    let total = 0;
+    for (const {type, qty} of types) {
+      const sabor = type==='frango' ? 'FRANGO' : 'LEGUMES';
+      for (let i=0; i<qty; i++) {
+        await printLabel(sabor, prodDateStr);
+        await delay(500);
         total++;
       }
     }
     toast(`✓ ${total} etiqueta${total>1?'s':''} enviada${total>1?'s':''}!`);
     closePrintModal();
-  }catch(e){
-    toast('Erro ao imprimir: '+e.message);
-  }finally{
-    btn.textContent='🖨 Imprimir'; btn.disabled=false;
+  } catch(e) {
+    console.error('Erro impressão:', e);
+    toast('Erro ao imprimir: ' + e.message);
+  } finally {
+    btn.textContent = '🖨 Imprimir'; btn.disabled = false;
   }
 }
 
