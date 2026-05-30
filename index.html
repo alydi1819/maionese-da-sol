@@ -835,9 +835,17 @@ const CMD = {
 
 async function cmd_SetDensity(d=3)    { await sendPacket(makePacket(CMD.SetDensity,    [d]));     await delay(60); }
 async function cmd_SetLabelType(t=1)  { await sendPacket(makePacket(CMD.SetLabelType,  [t]));     await delay(60); }
-async function cmd_PrintStart()       { await sendPacket(makePacket(CMD.PrintStart,    [0x01]));  await delay(120); }
+async function cmd_PrintStart() {
+  // Tenta formato de 7 bytes (B1 e modelos 2024+): totalPages(u16) + 4zeros + pageColor
+  await sendPacket(makePacket(CMD.PrintStart, [0x00,0x01,0x00,0x00,0x00,0x00,0x00]));
+  await delay(150);
+}
 async function cmd_PageStart()        { await sendPacket(makePacket(CMD.PageStart,     [0x01]));  await delay(60); }
-async function cmd_SetPageSize(r,c)   { await sendPacket(makePacket(CMD.SetPageSize,   [r>>8,r&0xFF,c>>8,c&0xFF])); await delay(120); }
+async function cmd_SetPageSize(r,c)   {
+  // 6 bytes: rows(u16) + cols(u16) + copies(u16)
+  await sendPacket(makePacket(CMD.SetPageSize, [r>>8,r&0xFF,c>>8,c&0xFF,0x00,0x01]));
+  await delay(120);
+}
 async function cmd_PageEnd()          { await sendPacket(makePacket(CMD.PageEnd,        [0x01]));  await delay(250); }
 async function cmd_PrintEnd()         { await sendPacket(makePacket(CMD.PrintEnd,       [0x01]));  await delay(250); }
 
