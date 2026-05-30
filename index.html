@@ -156,8 +156,6 @@ select option{background:var(--bg);color:var(--tx)}
 .loading-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;background:var(--y)}
 .loading-screen .logo{font-size:64px}
 .loading-screen p{font-size:16px;font-weight:600;color:#5C3A00}
-.bt-log{background:#1a1a1a;color:#0f0;font-family:monospace;font-size:11px;padding:10px;border-radius:8px;margin:8px 16px;max-height:180px;overflow-y:auto;display:none}
-.bt-log.visible{display:block}
 </style>
 </head>
 <body>
@@ -189,7 +187,6 @@ select option{background:var(--bg);color:var(--tx)}
       </button>
     </div>
     <div id="sync-status" class="sync-bar"></div>
-    <div id="bt-log" class="bt-log"></div>
     <div class="content" id="orders-list"></div>
   </div>
 
@@ -766,7 +763,6 @@ async function toggleBluetooth() {
       const d = new Uint8Array(e.target.value.buffer);
       const hex = Array.from(d).map(b=>b.toString(16).padStart(2,'0')).join(' ');
       console.log('BT<', hex);
-      btLog('← ' + hex);
     });
 
     // Handshake: comando Connect (0xC1)
@@ -799,14 +795,6 @@ function makePacket(cmd, data) {
 }
 
 // Envia em chunks de 20 bytes (limite BLE)
-function btLog(msg) {
-  const el = document.getElementById('bt-log');
-  if (!el) return;
-  el.classList.add('visible');
-  el.innerHTML += '<div>' + msg + '</div>';
-  el.scrollTop = el.scrollHeight;
-}
-
 async function sendPacket(pkt) {
   if (!btChar) throw new Error('Sem conexão Bluetooth');
   const hex = Array.from(pkt).map(b=>b.toString(16).padStart(2,'0')).join(' ');
@@ -907,7 +895,6 @@ async function printLabel(sabor, prodDateStr) {
   const rowBytes = Math.ceil(cols/8);
 
   console.log('Print:', cols+'x'+rows+'px');
-  btLog('▶ Imprimindo ' + cols + 'x' + rows + 'px');
 
   await cmd_SetDensity(3);
   await cmd_SetLabelType(1);
@@ -923,9 +910,7 @@ async function printLabel(sabor, prodDateStr) {
   }
 
   await cmd_PageEnd();
-  btLog('✓ PageEnd + PrintEnd enviados');
   await cmd_PrintEnd();
-  btLog('✓ Sequência completa!');
 }
 
 // ─── PRINT MODAL ─────────────────────────────────────────
