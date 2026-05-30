@@ -763,6 +763,15 @@ async function toggleBluetooth() {
       const d = new Uint8Array(e.target.value.buffer);
       console.log('BT<', Array.from(d).map(b=>b.toString(16).padStart(2,'0')).join(' '));
     });
+
+    // Handshake: comando Connect (0xC1) que alguns modelos exigem
+    try {
+      const connectPkt = makePacket(0xC1, [0x01]);
+      await btChar.writeValueWithoutResponse(connectPkt);
+      await delay(300);
+      console.log('BT handshake enviado');
+    } catch(e) { console.warn('Handshake falhou:', e); }
+
     setBtState('connected');
     toast('✓ Impressora pronta: ' + (btDevice.name || 'Niimbot'));
   } catch(e) {
