@@ -26,15 +26,21 @@ body{background:var(--bg2);display:flex;justify-content:center;min-height:100vh}
 #app{width:100%;max-width:430px;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;position:relative}
 .screen{display:none;flex-direction:column;flex:1;padding-bottom:64px}
 .screen.active{display:flex}
+
+/* Header */
 .header{background:var(--y);padding:52px 16px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
 .header-logo{width:36px;height:36px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .header-title{font-size:18px;font-weight:700;color:#5C3A00;flex:1}
 .header-action{background:rgba(0,0,0,0.1);border:none;cursor:pointer;color:#5C3A00;font-size:20px;padding:6px;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+
+/* Nav */
 .bottom-nav{display:flex;background:var(--bg);border-top:.5px solid var(--bd);padding:8px 0;position:fixed;bottom:0;width:100%;max-width:430px;z-index:10}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;padding:4px;font-size:9px;color:var(--mt);transition:color .2s;font-family:inherit}
 .nav-btn.active{color:var(--yd)}
 .nav-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .content{flex:1;padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* Cards */
 .card{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--rad);padding:14px;margin-bottom:12px}
 .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
 .card-name{font-size:15px;font-weight:600;color:var(--tx)}
@@ -65,6 +71,8 @@ body{background:var(--bg2);display:flex;justify-content:center;min-height:100vh}
 .ib svg,.pib svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .ib:hover,.pib:hover{background:var(--bg2)}
 .pib{background:none;border:none;cursor:pointer;color:var(--mt);padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+
+/* Modal base */
 .modal{display:none;position:fixed;inset:0;z-index:100;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.5)}
 .modal.open{display:flex}
 .modal-box{background:var(--bg);border-radius:var(--rad) var(--rad) 0 0;padding:20px;width:100%;max-width:430px;max-height:93vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:24px}
@@ -73,6 +81,57 @@ body{background:var(--bg2);display:flex;justify-content:center;min-height:100vh}
 .modal-btns{display:flex;gap:10px;margin-top:16px}
 .btn-c{flex:1;padding:13px;border:.5px solid var(--bd);border-radius:var(--rad-s);background:var(--bg2);color:var(--tx);font-size:15px;cursor:pointer;font-family:inherit}
 .btn-ok{flex:1;padding:13px;border:none;border-radius:var(--rad-s);background:var(--y);color:#5C3A00;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-ok:disabled{opacity:.5;cursor:default}
+
+/* ── WIZARD DE NOVO PEDIDO ── */
+.wizard-modal{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column}
+.wizard-modal.open{display:flex}
+.wizard-header{background:var(--y);padding:52px 16px 14px;display:flex;align-items:center;gap:12px}
+.wizard-back{background:rgba(0,0,0,0.1);border:none;cursor:pointer;color:#5C3A00;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wizard-back svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.wizard-htitle{font-size:17px;font-weight:700;color:#5C3A00;flex:1}
+.wizard-step-label{font-size:12px;color:rgba(92,58,0,0.7);font-weight:600}
+.wizard-progress{height:3px;background:rgba(0,0,0,0.1)}
+.wizard-progress-bar{height:3px;background:#5C3A00;transition:width .3s}
+.wizard-body{flex:1;overflow-y:auto;padding:24px 20px;-webkit-overflow-scrolling:touch}
+.wizard-question{font-size:22px;font-weight:700;color:var(--tx);margin-bottom:8px;line-height:1.3}
+.wizard-hint{font-size:14px;color:var(--mt);margin-bottom:28px;line-height:1.5}
+.wizard-footer{padding:16px 20px;border-top:.5px solid var(--bd);background:var(--bg)}
+.btn-next{width:100%;padding:16px;border:none;border-radius:var(--rad);background:var(--y);color:#5C3A00;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-next:disabled{opacity:.4;cursor:default}
+
+/* Opções de escolha (categoria, pagamento) */
+.choice-grid{display:flex;flex-direction:column;gap:12px}
+.choice-btn{width:100%;padding:18px 20px;border:2px solid var(--bd);border-radius:var(--rad);background:var(--bg);color:var(--tx);font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;text-align:left;display:flex;align-items:center;gap:14px;transition:all .15s}
+.choice-btn.selected{border-color:var(--y);background:var(--yl)}
+.choice-btn .choice-icon{font-size:28px;width:44px;text-align:center;flex-shrink:0}
+.choice-btn .choice-text{flex:1}
+.choice-btn .choice-desc{font-size:13px;color:var(--mt);font-weight:400;margin-top:2px}
+
+/* Input grande wizard */
+.wizard-input{width:100%;padding:16px;border:2px solid var(--bd);border-radius:var(--rad);font-size:18px;background:var(--bg);color:var(--tx);font-family:inherit;outline:none;margin-bottom:12px}
+.wizard-input:focus{border-color:var(--y)}
+
+/* Seletor de quantidade de potes */
+.produto-card{border:2px solid var(--bd);border-radius:var(--rad);padding:16px;margin-bottom:12px;transition:border-color .15s}
+.produto-card.active{border-color:var(--y)}
+.produto-nome{font-size:16px;font-weight:600;color:var(--tx);margin-bottom:4px}
+.produto-preco{font-size:13px;color:var(--mt);margin-bottom:14px}
+.qty-ctrl{display:flex;align-items:center;gap:0;border:1.5px solid var(--bd);border-radius:var(--rad-s);overflow:hidden;width:fit-content}
+.qty-ctrl button{background:var(--bg2);border:none;cursor:pointer;font-size:22px;width:48px;height:48px;color:var(--tx);display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1}
+.qty-ctrl button:active{background:var(--bd)}
+.qty-ctrl span{font-size:20px;font-weight:700;color:var(--tx);width:52px;text-align:center}
+
+/* Resumo do pedido no wizard */
+.resumo-linha{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:.5px solid var(--bd);font-size:15px}
+.resumo-linha:last-child{border-bottom:none}
+.resumo-label{color:var(--mt)}
+.resumo-valor{font-weight:600;color:var(--tx)}
+.resumo-total{display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--yl);border-radius:var(--rad-s);margin-top:12px}
+.resumo-total-label{font-size:14px;font-weight:600;color:var(--yd)}
+.resumo-total-valor{font-size:20px;font-weight:700;color:var(--yd)}
+
+/* Form fields */
 .fg{margin-bottom:13px}
 .fl{font-size:12px;color:var(--mt);margin-bottom:6px;display:block;font-weight:500}
 .fi{width:100%;padding:12px;border:.5px solid var(--bd);border-radius:var(--rad-s);font-size:15px;background:var(--bg);color:var(--tx);font-family:inherit;outline:none}
@@ -96,6 +155,8 @@ body{background:var(--bg2);display:flex;justify-content:center;min-height:100vh}
 .i-rm{background:none;border:none;cursor:pointer;color:var(--mt);padding:6px;font-size:18px;font-family:inherit}
 .add-i{width:100%;padding:11px;border:1.5px dashed var(--bd);border-radius:var(--rad-s);background:none;color:var(--mt);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit}
 .price-prev{font-size:14px;font-weight:600;color:var(--yd);text-align:center;padding:12px;background:var(--yl);border-radius:var(--rad-s);margin-top:8px}
+
+/* Stats */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .stat-card{background:var(--bg2);border-radius:var(--rad-s);padding:12px}
 .stat-label{font-size:11px;color:var(--mt);margin-bottom:4px;font-weight:500}
@@ -111,6 +172,8 @@ body{background:var(--bg2);display:flex;justify-content:center;min-height:100vh}
 .date-row{display:flex;gap:8px;margin-bottom:14px;align-items:center}
 .date-row input{flex:1;padding:9px 10px;border:.5px solid var(--bd);border-radius:var(--rad-s);font-size:13px;background:var(--bg);color:var(--tx);font-family:inherit}
 .date-row label{font-size:12px;color:var(--mt);white-space:nowrap;font-weight:500}
+
+/* Empty + misc */
 .empty-state{text-align:center;padding:60px 20px;color:var(--mt)}
 .empty-icon{font-size:52px;margin-bottom:14px}
 .empty-state p{font-size:15px;line-height:1.6}
@@ -118,7 +181,6 @@ body{background:var(--bg2);display:flex;justify-content:center;min-height:100vh}
 .backup-btn{width:100%;padding:13px;border:.5px solid var(--bd);border-radius:var(--rad-s);background:var(--bg);color:var(--tx);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;font-family:inherit;font-weight:500}
 .backup-btn.primary{background:var(--y);border-color:transparent;color:#5C3A00;font-weight:700}
 .backup-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.backup-info{font-size:12px;color:var(--mt);text-align:center;padding:10px;background:var(--bg2);border-radius:var(--rad-s);line-height:1.6}
 .settings-title{font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
 .settings-row{display:flex;align-items:center;padding:12px 0;border-bottom:.5px solid var(--bd);gap:10px}
 .settings-row:last-child{border-bottom:none}
@@ -150,9 +212,7 @@ select option{background:var(--bg);color:var(--tx)}
 .label-title{font-size:15px;font-weight:700;text-align:center;letter-spacing:.5px;margin-bottom:6px;border-bottom:1px solid #333;padding-bottom:5px}
 .label-line{font-size:12px;margin:3px 0}
 .sync-bar{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:12px}
-.sync-ok{color:var(--g)}
-.sync-err{color:var(--r)}
-.sync-ing{color:var(--yd)}
+.sync-ok{color:var(--g)}.sync-err{color:var(--r)}.sync-ing{color:var(--yd)}
 .loading-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;background:var(--y)}
 .loading-screen .logo{font-size:64px}
 .loading-screen p{font-size:16px;font-weight:600;color:#5C3A00}
@@ -162,10 +222,11 @@ select option{background:var(--bg);color:var(--tx)}
 
 <div id="loading-screen" class="loading-screen">
   <div class="logo">🫙</div>
-  <p>Carregando Maionese da Sol…</p>
+  <p>Carregando…</p>
 </div>
 
 <div id="app" style="display:none">
+  <!-- PEDIDOS -->
   <div class="screen active" id="screen-dash">
     <div class="header">
       <div class="header-logo">🫙</div>
@@ -174,12 +235,12 @@ select option{background:var(--bg);color:var(--tx)}
         <svg viewBox="0 0 24 24"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"/></svg>
         <span class="bt-dot" id="bt-dot"></span>
       </button>
-      <button class="header-action" onclick="showModal(null)">＋</button>
+      <button class="header-action" onclick="wizardOpen(null)">＋</button>
     </div>
     <div class="search-sort-bar">
       <div class="search-wrap">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="search-input" id="search-input" type="text" placeholder="Buscar por nome ou celular…" oninput="renderOrders()" autocomplete="off">
+        <input class="search-input" id="search-input" type="text" placeholder="Buscar por nome…" oninput="renderOrders()" autocomplete="off">
       </div>
       <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
         <svg viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
@@ -190,16 +251,19 @@ select option{background:var(--bg);color:var(--tx)}
     <div class="content" id="orders-list"></div>
   </div>
 
+  <!-- HISTÓRICO -->
   <div class="screen" id="screen-historico">
     <div class="header"><div class="header-logo">🫙</div><span class="header-title">Histórico</span></div>
     <div class="content" id="historico-list"></div>
   </div>
 
+  <!-- RESUMO -->
   <div class="screen" id="screen-resumo">
     <div class="header"><div class="header-logo">🫙</div><span class="header-title">Resumo de Vendas</span></div>
     <div class="content" id="resumo-content"></div>
   </div>
 
+  <!-- CONFIG -->
   <div class="screen" id="screen-config">
     <div class="header"><div class="header-logo">🫙</div><span class="header-title">Configurações</span></div>
     <div class="content" id="config-content"></div>
@@ -225,38 +289,54 @@ select option{background:var(--bg);color:var(--tx)}
   </nav>
 </div>
 
-<!-- MODAL PEDIDO -->
-<div class="modal" id="modal-new">
+<!-- ═══ WIZARD NOVO PEDIDO ═══ -->
+<div class="wizard-modal" id="wizard-modal">
+  <div class="wizard-header">
+    <button class="wizard-back" id="wizard-back-btn" onclick="wizardBack()">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <span class="wizard-htitle" id="wizard-htitle">Novo Pedido</span>
+    <span class="wizard-step-label" id="wizard-step-label">Passo 1 de 5</span>
+  </div>
+  <div class="wizard-progress"><div class="wizard-progress-bar" id="wizard-progress-bar"></div></div>
+  <div class="wizard-body" id="wizard-body"></div>
+  <div class="wizard-footer">
+    <button class="btn-next" id="wizard-next-btn" onclick="wizardNext()">Continuar</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR PEDIDO -->
+<div class="modal" id="modal-edit">
   <div class="modal-box">
     <div class="modal-title">
-      <span id="modal-heading">Novo Pedido</span>
-      <button class="close-btn" onclick="closeModal()">✕</button>
+      <span>Editar Pedido</span>
+      <button class="close-btn" onclick="closeEditModal()">✕</button>
     </div>
-    <div class="fg"><label class="fl">Nome do cliente</label><input class="fi" id="m-name" type="text" placeholder="Ex: Maria Silva" autocomplete="off"></div>
-    <div class="fg"><label class="fl">Telefone</label><input class="fi" id="m-phone" type="tel" placeholder="(11) 99999-9999"></div>
+    <div class="fg"><label class="fl">Nome do cliente</label><input class="fi" id="e-name" type="text" autocomplete="off"></div>
+    <div class="fg"><label class="fl">Telefone</label><input class="fi" id="e-phone" type="tel"></div>
     <div class="fr">
       <div class="fg"><label class="fl">Categoria</label>
-        <select class="fi" id="m-cat" onchange="rebuildItemsUI()">
+        <select class="fi" id="e-cat" onchange="rebuildEditItems()">
           <option value="Particular">Particular</option>
           <option value="Terceiros">Terceiros</option>
         </select>
       </div>
-      <div class="fg"><label class="fl">Data de entrega</label><input class="fi" id="m-delivery" type="date"></div>
+      <div class="fg"><label class="fl">Data de entrega</label><input class="fi" id="e-delivery" type="date"></div>
     </div>
     <div class="fg"><label class="fl">Pagamento</label>
       <div class="seg">
-        <button class="seg-b active" id="pay-pix" onclick="selectPay('pix')">📱 Pix</button>
-        <button class="seg-b" id="pay-din" onclick="selectPay('dinheiro')">💵 Dinheiro</button>
+        <button class="seg-b active" id="epay-pix" onclick="selectEditPay('pix')">📱 Pix</button>
+        <button class="seg-b" id="epay-din" onclick="selectEditPay('dinheiro')">💵 Dinheiro</button>
       </div>
     </div>
     <div class="fg"><label class="fl">Itens</label>
-      <div class="ib-wrap" id="items-builder"></div>
-      <button class="add-i" onclick="addItemRow()">＋ Adicionar item</button>
+      <div class="ib-wrap" id="edit-items-builder"></div>
+      <button class="add-i" onclick="addEditItemRow()">＋ Adicionar item</button>
     </div>
-    <div class="price-prev" id="modal-total">Total: R$ 0,00</div>
+    <div class="price-prev" id="edit-modal-total">Total: R$ 0,00</div>
     <div class="modal-btns">
-      <button class="btn-c" onclick="closeModal()">Cancelar</button>
-      <button class="btn-ok" id="modal-save-btn" onclick="saveOrder()">Criar Pedido</button>
+      <button class="btn-c" onclick="closeEditModal()">Cancelar</button>
+      <button class="btn-ok" onclick="saveEditOrder()">Salvar</button>
     </div>
   </div>
 </div>
@@ -292,7 +372,6 @@ async function sbLoad(id) {
     return data ? data.payload : null;
   } catch(e) { console.warn('sbLoad error', e); return null; }
 }
-
 async function sbSave(id, payload) {
   try {
     const { error } = await sb.from('sol_data').upsert({ id, payload, updated_at: new Date().toISOString() });
@@ -301,7 +380,7 @@ async function sbSave(id, payload) {
   } catch(e) { console.warn('sbSave error', e); return false; }
 }
 
-// ─── CONSTANTS ────────────────────────────────────────────
+// ─── CONSTANTES ───────────────────────────────────────────
 const PRODUCTS = ['Frango 500g','Legumes 500g','Frango 1kg','Legumes 1kg'];
 const CATS = ['Particular','Terceiros'];
 
@@ -312,41 +391,32 @@ let prices = {
   'Frango 1kg':{'Particular':28,'Terceiros':22},
   'Legumes 1kg':{'Particular':24,'Terceiros':19}
 };
-let orders = [];
-let nextId = 1;
-let syncOk = false;
+let orders = [], nextId = 1;
 
 function setSyncStatus(state, msg) {
-  syncOk = state === 'ok';
   const el = document.getElementById('sync-status');
   if (!el) return;
-  const cls = state === 'ok' ? 'sync-ok' : state === 'saving' ? 'sync-ing' : 'sync-err';
-  el.className = 'sync-bar ' + cls;
+  el.className = 'sync-bar ' + (state==='ok'?'sync-ok':state==='saving'?'sync-ing':'sync-err');
   el.textContent = msg;
 }
 
 async function loadAll() {
   const d = await sbLoad('main');
-  if (d) { orders = d.orders || []; nextId = d.nextId || 1; }
+  if (d) { orders = d.orders||[]; nextId = d.nextId||1; }
   const p = await sbLoad('prices');
   if (p) prices = p;
-  setSyncStatus('ok', '☁️ Dados sincronizados com a nuvem');
-  document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  document.getElementById('app').style.flexDirection = 'column';
-  renderOrders();
-  renderHistorico();
+  setSyncStatus('ok','☁️ Dados sincronizados');
+  document.getElementById('loading-screen').style.display='none';
+  document.getElementById('app').style.cssText='display:flex;flex-direction:column';
+  renderOrders(); renderHistorico();
 }
 
 async function persistOrders() {
-  setSyncStatus('saving', '⏳ Salvando…');
-  const ok = await sbSave('main', { orders, nextId });
-  setSyncStatus(ok ? 'ok' : 'err', ok ? '☁️ Dados sincronizados' : '⚠️ Erro ao salvar — verifique conexão');
+  setSyncStatus('saving','⏳ Salvando…');
+  const ok = await sbSave('main', {orders, nextId});
+  setSyncStatus(ok?'ok':'err', ok?'☁️ Dados sincronizados':'⚠️ Erro ao salvar');
 }
-
-async function persistPrices() {
-  await sbSave('prices', prices);
-}
+async function persistPrices() { await sbSave('prices', prices); }
 
 // ─── HELPERS ──────────────────────────────────────────────
 function fmt(v){ return 'R$ '+Number(v).toFixed(2).replace('.',','); }
@@ -370,100 +440,348 @@ function navTo(screen, btn) {
   if(screen==='historico') renderHistorico();
 }
 
-// ─── MODAL ────────────────────────────────────────────────
-let selectedPay='pix', modalItems=[], editingId=null;
+// ═══════════════════════════════════════════════════════════
+// ─── WIZARD NOVO PEDIDO ───────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+const WIZARD_STEPS = ['cliente','categoria','itens','entrega','pagamento','resumo'];
+let wStep = 0;
+let wData = {}; // {nome, phone, cat, qtys:{prod:qty}, delivery, pagamento}
 
-function selectPay(p){
-  selectedPay=p;
-  document.getElementById('pay-pix').classList.toggle('active',p==='pix');
-  document.getElementById('pay-din').classList.toggle('active',p==='dinheiro');
+function wizardOpen(orderId) {
+  // Por ora wizard só para novos pedidos
+  if (orderId !== null) { showEditModal(orderId); return; }
+  wStep = 0;
+  wData = { nome:'', phone:'', cat:'Particular', qtys:{}, delivery:'', pagamento:'pix' };
+  // delivery padrão = amanhã
+  const t = new Date(); t.setDate(t.getDate()+1);
+  wData.delivery = t.toISOString().split('T')[0];
+  document.getElementById('wizard-modal').classList.add('open');
+  wizardRender();
 }
 
-function showModal(orderId){
-  editingId=orderId;
-  const isEdit=orderId!==null;
-  document.getElementById('modal-heading').textContent=isEdit?'Editar Pedido':'Novo Pedido';
-  document.getElementById('modal-save-btn').textContent=isEdit?'Salvar Alterações':'Criar Pedido';
-  if(isEdit){
-    const o=orders.find(x=>x.id===orderId);
-    document.getElementById('m-name').value=o.name;
-    document.getElementById('m-phone').value=o.phone;
-    document.getElementById('m-cat').value=o.cat;
-    document.getElementById('m-delivery').value=o.deliveryDate||'';
-    selectPay(o.pagamento||'pix');
-    modalItems=o.items.map(i=>({prod:i.prod,qty:i.qty,lockedPrice:i.unitPrice}));
-  } else {
-    document.getElementById('m-name').value='';
-    document.getElementById('m-phone').value='';
-    document.getElementById('m-cat').value='Particular';
-    const t=new Date(); t.setDate(t.getDate()+1);
-    document.getElementById('m-delivery').value=t.toISOString().split('T')[0];
-    selectPay('pix');
-    modalItems=[{prod:'Frango 500g',qty:1,lockedPrice:null}];
+function wizardClose() {
+  document.getElementById('wizard-modal').classList.remove('open');
+}
+
+function wizardBack() {
+  if (wStep === 0) { wizardClose(); return; }
+  wStep--;
+  wizardRender();
+}
+
+function wizardNext() {
+  // Validação por etapa
+  if (wStep === 0) { // cliente
+    const nome = document.getElementById('w-nome')?.value.trim();
+    if (!nome) { toast('Informe o nome da cliente'); return; }
+    wData.nome = nome;
+    wData.phone = document.getElementById('w-phone')?.value.trim()||'';
   }
-  rebuildItemsUI();
-  document.getElementById('modal-new').classList.add('open');
-  document.querySelector('.modal-box').scrollTop=0;
-}
-function closeModal(){ document.getElementById('modal-new').classList.remove('open'); editingId=null; }
-function addItemRow(){ modalItems.push({prod:'Frango 500g',qty:1,lockedPrice:null}); rebuildItemsUI(); }
-function removeItemRow(idx){ if(modalItems.length===1){ toast('Precisa ter ao menos 1 item'); return; } modalItems.splice(idx,1); rebuildItemsUI(); }
-function updateItemProd(idx,val){ modalItems[idx].prod=val; rebuildItemsUI(); }
-function updateItemQty(idx,delta){ const inp=document.getElementById('iqty-'+idx); const v=Math.max(1,(parseInt(inp.value)||1)+delta); inp.value=v; modalItems[idx].qty=v; calcModalTotal(); }
-function updateItemQtyInput(idx,val){ modalItems[idx].qty=Math.max(1,parseInt(val)||1); calcModalTotal(); }
-function getItemPrice(item){ if(item.lockedPrice!=null) return item.lockedPrice; const cat=document.getElementById('m-cat').value; return (prices[item.prod]&&prices[item.prod][cat])||0; }
+  if (wStep === 2) { // itens
+    const total = Object.values(wData.qtys).reduce((s,q)=>s+q,0);
+    if (total === 0) { toast('Adicione pelo menos 1 pote'); return; }
+  }
+  if (wStep === 3) { // entrega
+    const d = document.getElementById('w-delivery')?.value;
+    if (!d) { toast('Informe a data de entrega'); return; }
+    wData.delivery = d;
+  }
 
-function rebuildItemsUI(){
-  const el=document.getElementById('items-builder');
-  el.innerHTML=modalItems.map((it,i)=>{
-    const up=getItemPrice(it);
+  if (wStep < WIZARD_STEPS.length - 1) {
+    wStep++;
+    wizardRender();
+  } else {
+    wizardSave();
+  }
+}
+
+function wizardRender() {
+  const stepName = WIZARD_STEPS[wStep];
+  const total = WIZARD_STEPS.length;
+  const pct = ((wStep+1)/total*100).toFixed(0);
+
+  document.getElementById('wizard-progress-bar').style.width = pct+'%';
+  document.getElementById('wizard-step-label').textContent = `Passo ${wStep+1} de ${total}`;
+  document.getElementById('wizard-back-btn').style.visibility = wStep===0 ? 'hidden' : 'visible';
+
+  const nextBtn = document.getElementById('wizard-next-btn');
+  nextBtn.textContent = wStep === WIZARD_STEPS.length-1 ? '✓ Criar Pedido' : 'Continuar';
+
+  const body = document.getElementById('wizard-body');
+
+  if (stepName === 'cliente') {
+    document.getElementById('wizard-htitle').textContent = 'Novo Pedido';
+    body.innerHTML = `
+      <div class="wizard-question">Qual o nome da cliente?</div>
+      <div class="wizard-hint">Informe o nome completo ou apelido para identificar o pedido.</div>
+      <input class="wizard-input" id="w-nome" type="text" placeholder="Ex: Maria Silva" value="${wData.nome}" autocomplete="off">
+      <input class="wizard-input" id="w-phone" type="tel" placeholder="Telefone (opcional)" value="${wData.phone}" style="font-size:16px">
+    `;
+    setTimeout(()=>document.getElementById('w-nome')?.focus(),100);
+  }
+
+  else if (stepName === 'categoria') {
+    document.getElementById('wizard-htitle').textContent = wData.nome;
+    body.innerHTML = `
+      <div class="wizard-question">Que tipo de cliente?</div>
+      <div class="wizard-hint">Isso define o preço dos potes.</div>
+      <div class="choice-grid">
+        <button class="choice-btn ${wData.cat==='Particular'?'selected':''}" onclick="wSelectCat('Particular')">
+          <span class="choice-icon">👤</span>
+          <div class="choice-text">
+            <div>Particular</div>
+            <div class="choice-desc">Clientes pessoais e família</div>
+          </div>
+        </button>
+        <button class="choice-btn ${wData.cat==='Terceiros'?'selected':''}" onclick="wSelectCat('Terceiros')">
+          <span class="choice-icon">🏪</span>
+          <div class="choice-text">
+            <div>Terceiros</div>
+            <div class="choice-desc">Revendedores e empresas</div>
+          </div>
+        </button>
+      </div>
+    `;
+  }
+
+  else if (stepName === 'itens') {
+    document.getElementById('wizard-htitle').textContent = 'Quais potes?';
+    const cat = wData.cat;
+    body.innerHTML = `
+      <div class="wizard-question">Quantos potes de cada?</div>
+      <div class="wizard-hint">Toque no + para adicionar. Deixe em 0 para não incluir.</div>
+      ${PRODUCTS.map(prod => {
+        const preco = prices[prod]?.[cat]||0;
+        const qty = wData.qtys[prod]||0;
+        return `<div class="produto-card ${qty>0?'active':''}" id="pc-${prod.replace(' ','-')}">
+          <div class="produto-nome">${prod}</div>
+          <div class="produto-preco">${fmt(preco)} por pote</div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="qty-ctrl">
+              <button onclick="wQty('${prod}',-1)">−</button>
+              <span id="wqty-${prod.replace(/ /g,'-')}">${qty}</span>
+              <button onclick="wQty('${prod}',1)">+</button>
+            </div>
+            ${qty>0?`<span style="font-size:14px;font-weight:700;color:var(--yd)">${fmt(preco*qty)}</span>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+      <div id="w-itens-total" style="margin-top:4px"></div>
+    `;
+    wUpdateItensTotal();
+  }
+
+  else if (stepName === 'entrega') {
+    document.getElementById('wizard-htitle').textContent = 'Entrega';
+    body.innerHTML = `
+      <div class="wizard-question">Quando entregar?</div>
+      <div class="wizard-hint">Data combinada com a cliente para entrega dos potes.</div>
+      <input class="wizard-input" id="w-delivery" type="date" value="${wData.delivery}">
+    `;
+  }
+
+  else if (stepName === 'pagamento') {
+    document.getElementById('wizard-htitle').textContent = 'Pagamento';
+    body.innerHTML = `
+      <div class="wizard-question">Como vai pagar?</div>
+      <div class="wizard-hint">Forma de pagamento combinada com a cliente.</div>
+      <div class="choice-grid">
+        <button class="choice-btn ${wData.pagamento==='pix'?'selected':''}" onclick="wSelectPag('pix')">
+          <span class="choice-icon">📱</span>
+          <div class="choice-text">
+            <div>Pix</div>
+            <div class="choice-desc">Chave: solangeribeiro0104@gmail.com</div>
+          </div>
+        </button>
+        <button class="choice-btn ${wData.pagamento==='dinheiro'?'selected':''}" onclick="wSelectPag('dinheiro')">
+          <span class="choice-icon">💵</span>
+          <div class="choice-text">
+            <div>Dinheiro</div>
+            <div class="choice-desc">Pagamento na entrega</div>
+          </div>
+        </button>
+      </div>
+    `;
+  }
+
+  else if (stepName === 'resumo') {
+    document.getElementById('wizard-htitle').textContent = 'Confirmar';
+    const cat = wData.cat;
+    const itens = PRODUCTS.filter(p=>(wData.qtys[p]||0)>0).map(p=>({
+      prod:p, qty:wData.qtys[p], unitPrice:prices[p]?.[cat]||0
+    }));
+    const total = itens.reduce((s,i)=>s+i.unitPrice*i.qty,0);
+    const payLabel = wData.pagamento==='pix'?'📱 Pix':'💵 Dinheiro';
+    body.innerHTML = `
+      <div class="wizard-question">Tudo certo?</div>
+      <div class="wizard-hint">Confira os dados antes de criar o pedido.</div>
+      <div style="border:.5px solid var(--bd);border-radius:var(--rad);padding:16px;margin-bottom:16px">
+        <div class="resumo-linha"><span class="resumo-label">Cliente</span><span class="resumo-valor">${wData.nome}</span></div>
+        ${wData.phone?`<div class="resumo-linha"><span class="resumo-label">Telefone</span><span class="resumo-valor">${wData.phone}</span></div>`:''}
+        <div class="resumo-linha"><span class="resumo-label">Categoria</span><span class="resumo-valor">${cat}</span></div>
+        <div class="resumo-linha"><span class="resumo-label">Entrega</span><span class="resumo-valor">${fmtDateFull(wData.delivery)}</span></div>
+        <div class="resumo-linha"><span class="resumo-label">Pagamento</span><span class="resumo-valor">${payLabel}</span></div>
+      </div>
+      <div style="border:.5px solid var(--bd);border-radius:var(--rad);padding:16px">
+        ${itens.map(i=>`<div class="resumo-linha">
+          <span class="resumo-label">${i.qty}× ${i.prod}</span>
+          <span class="resumo-valor">${fmt(i.unitPrice*i.qty)}</span>
+        </div>`).join('')}
+        <div class="resumo-total">
+          <span class="resumo-total-label">Total</span>
+          <span class="resumo-total-valor">${fmt(total)}</span>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function wSelectCat(cat) {
+  wData.cat = cat;
+  // Recalcula preços dos itens quando muda categoria
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function wSelectPag(pag) {
+  wData.pagamento = pag;
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function wQty(prod, delta) {
+  const cur = wData.qtys[prod]||0;
+  const novo = Math.max(0, cur+delta);
+  wData.qtys[prod] = novo;
+  const key = prod.replace(/ /g,'-');
+  const el = document.getElementById('wqty-'+key);
+  if (el) el.textContent = novo;
+  const card = document.getElementById('pc-'+prod.replace(' ','-'));
+  if (card) card.classList.toggle('active', novo>0);
+  // Atualiza subtotal do produto
+  const preco = prices[prod]?.[wData.cat]||0;
+  const cardInner = card?.querySelector('div:last-child span:last-child');
+  // Re-render simples do card
+  const subEl = card?.querySelector('[data-sub]');
+  wUpdateItensTotal();
+  // Rerender do card para mostrar subtotal
+  if(card){
+    const bot = card.querySelector('div:last-child');
+    bot.innerHTML = `<div class="qty-ctrl">
+      <button onclick="wQty('${prod}',-1)">−</button>
+      <span id="wqty-${key}">${novo}</span>
+      <button onclick="wQty('${prod}',1)">+</button>
+    </div>${novo>0?`<span style="font-size:14px;font-weight:700;color:var(--yd)">${fmt(preco*novo)}</span>`:''}`;
+  }
+}
+
+function wUpdateItensTotal() {
+  const cat = wData.cat;
+  const total = PRODUCTS.reduce((s,p)=>s+(wData.qtys[p]||0)*(prices[p]?.[cat]||0),0);
+  const totalPotes = PRODUCTS.reduce((s,p)=>s+(wData.qtys[p]||0),0);
+  const el = document.getElementById('w-itens-total');
+  if (el && totalPotes > 0) {
+    el.innerHTML = `<div class="resumo-total"><span class="resumo-total-label">${totalPotes} pote${totalPotes>1?'s':''}</span><span class="resumo-total-valor">${fmt(total)}</span></div>`;
+  } else if (el) {
+    el.innerHTML = '';
+  }
+}
+
+async function wizardSave() {
+  const cat = wData.cat;
+  const items = PRODUCTS.filter(p=>(wData.qtys[p]||0)>0).map(p=>({
+    prod:p, qty:wData.qtys[p], unitPrice:prices[p]?.[cat]||0
+  }));
+  const today = new Date().toISOString().split('T')[0];
+  const order = {
+    id: nextId++,
+    name: wData.nome,
+    phone: wData.phone,
+    cat,
+    items,
+    pagamento: wData.pagamento,
+    entregue: false,
+    pago: false,
+    openDate: today,
+    deliveryDate: wData.delivery
+  };
+  orders.unshift(order);
+  await persistOrders();
+  wizardClose();
+  renderOrders();
+  sendSMS(order);
+  toast('Pedido criado! Abrindo SMS…');
+}
+
+// ─── MODAL EDITAR ─────────────────────────────────────────
+let editingId = null, editPay = 'pix', editItems = [];
+
+function showEditModal(orderId) {
+  editingId = orderId;
+  const o = orders.find(x=>x.id===orderId);
+  document.getElementById('e-name').value = o.name;
+  document.getElementById('e-phone').value = o.phone||'';
+  document.getElementById('e-cat').value = o.cat;
+  document.getElementById('e-delivery').value = o.deliveryDate||'';
+  selectEditPay(o.pagamento||'pix');
+  editItems = o.items.map(i=>({prod:i.prod,qty:i.qty,lockedPrice:i.unitPrice}));
+  rebuildEditItems();
+  document.getElementById('modal-edit').classList.add('open');
+}
+function closeEditModal(){ document.getElementById('modal-edit').classList.remove('open'); editingId=null; }
+
+function selectEditPay(p){
+  editPay=p;
+  document.getElementById('epay-pix').classList.toggle('active',p==='pix');
+  document.getElementById('epay-din').classList.toggle('active',p==='dinheiro');
+}
+function getEditItemPrice(item){ if(item.lockedPrice!=null) return item.lockedPrice; const cat=document.getElementById('e-cat').value; return (prices[item.prod]&&prices[item.prod][cat])||0; }
+function addEditItemRow(){ editItems.push({prod:'Frango 500g',qty:1,lockedPrice:null}); rebuildEditItems(); }
+function removeEditItemRow(idx){ if(editItems.length===1){ toast('Precisa ter ao menos 1 item'); return; } editItems.splice(idx,1); rebuildEditItems(); }
+function updateEditItemProd(idx,val){ editItems[idx].prod=val; rebuildEditItems(); }
+function updateEditItemQty(idx,delta){ const inp=document.getElementById('eiqty-'+idx); const v=Math.max(1,(parseInt(inp.value)||1)+delta); inp.value=v; editItems[idx].qty=v; calcEditTotal(); }
+function updateEditItemQtyInput(idx,val){ editItems[idx].qty=Math.max(1,parseInt(val)||1); calcEditTotal(); }
+
+function rebuildEditItems(){
+  const el=document.getElementById('edit-items-builder');
+  el.innerHTML=editItems.map((it,i)=>{
+    const up=getEditItemPrice(it);
     return `<div class="ib-row">
       <div class="ib-pname">${it.prod}</div>
-      <select class="ib-sel" onchange="updateItemProd(${i},this.value)">
+      <select class="ib-sel" onchange="updateEditItemProd(${i},this.value)">
         ${PRODUCTS.map(p=>`<option value="${p}"${p===it.prod?' selected':''}>${p}</option>`).join('')}
       </select>
       <div class="ib-bot">
         <div class="qty-m">
-          <button type="button" onclick="updateItemQty(${i},-1)">−</button>
-          <input id="iqty-${i}" type="number" min="1" value="${it.qty}" oninput="updateItemQtyInput(${i},this.value)">
-          <button type="button" onclick="updateItemQty(${i},1)">+</button>
+          <button type="button" onclick="updateEditItemQty(${i},-1)">−</button>
+          <input id="eiqty-${i}" type="number" min="1" value="${it.qty}" oninput="updateEditItemQtyInput(${i},this.value)">
+          <button type="button" onclick="updateEditItemQty(${i},1)">+</button>
         </div>
         <span class="iu-price">${fmt(up)}/pote</span>
         <span class="i-sub">${fmt(up*it.qty)}</span>
-        <button class="i-rm" onclick="removeItemRow(${i})" type="button">✕</button>
+        <button class="i-rm" onclick="removeEditItemRow(${i})" type="button">✕</button>
       </div>
     </div>`;
   }).join('');
-  calcModalTotal();
+  calcEditTotal();
 }
-
-function calcModalTotal(){
+function calcEditTotal(){
   let total=0;
-  const lines=modalItems.map(it=>{ const up=getItemPrice(it); total+=up*it.qty; return `${it.qty}× ${it.prod}`; }).join(' + ');
-  document.getElementById('modal-total').textContent=lines+' = '+fmt(total);
+  const lines=editItems.map(it=>{ const up=getEditItemPrice(it); total+=up*it.qty; return `${it.qty}× ${it.prod}`; }).join(' + ');
+  document.getElementById('edit-modal-total').textContent=lines+' = '+fmt(total);
 }
-
-async function saveOrder(){
-  const name=document.getElementById('m-name').value.trim();
-  const phone=document.getElementById('m-phone').value.trim();
-  const cat=document.getElementById('m-cat').value;
-  const delivery=document.getElementById('m-delivery').value;
-  if(!name){ toast('Informe o nome do cliente'); return; }
+async function saveEditOrder(){
+  const name=document.getElementById('e-name').value.trim();
+  const phone=document.getElementById('e-phone').value.trim();
+  const cat=document.getElementById('e-cat').value;
+  const delivery=document.getElementById('e-delivery').value;
+  if(!name){ toast('Informe o nome'); return; }
   if(!delivery){ toast('Informe a data de entrega'); return; }
-  if(editingId!==null){
-    const o=orders.find(x=>x.id===editingId);
-    o.name=name; o.phone=phone; o.cat=cat; o.deliveryDate=delivery; o.pagamento=selectedPay;
-    o.items=modalItems.map(it=>({prod:it.prod,qty:it.qty,unitPrice:getItemPrice(it)}));
-    await persistOrders(); closeModal(); renderOrders(); renderHistorico();
-    toast('Pedido atualizado!');
-  } else {
-    const today=new Date().toISOString().split('T')[0];
-    const items=modalItems.map(it=>({prod:it.prod,qty:it.qty,unitPrice:getItemPrice(it)}));
-    const order={id:nextId++,name,phone,cat,items,pagamento:selectedPay,entregue:false,pago:false,openDate:today,deliveryDate:delivery};
-    orders.unshift(order); await persistOrders(); closeModal(); renderOrders();
-    sendSMS(order);
-    toast('Pedido criado! Abrindo SMS…');
-  }
+  const o=orders.find(x=>x.id===editingId);
+  o.name=name; o.phone=phone; o.cat=cat; o.deliveryDate=delivery; o.pagamento=editPay;
+  o.items=editItems.map(it=>({prod:it.prod,qty:it.qty,unitPrice:getEditItemPrice(it)}));
+  await persistOrders(); closeEditModal(); renderOrders(); renderHistorico();
+  toast('Pedido atualizado!');
 }
 
 // ─── SMS ──────────────────────────────────────────────────
@@ -512,7 +830,7 @@ function renderOrderCard(o, isActive){
       <div class="card-btns">
         <button class="pib" onclick="showPrintModal(${o.id})" title="Imprimir etiqueta">${ico('M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z')}</button>
         <button class="ib" onclick="manualSMS(${o.id})" title="SMS">${ico('M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6')}</button>
-        <button class="ib" onclick="showModal(${o.id})" title="Editar">${ico('M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z')}</button>
+        <button class="ib" onclick="wizardOpen(${o.id})" title="Editar">${ico('M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z')}</button>
         <button class="ib" onclick="deleteOrder(${o.id})" title="Apagar">${ico('M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2')}</button>
       </div>
     </div>`:`
@@ -520,10 +838,10 @@ function renderOrderCard(o, isActive){
       <span class="hist-badge mb-ok-g">✓ Entregue</span>
       <span class="hist-badge mb-ok-b">✓ Pago</span>
       <div class="card-btns">
-        <button class="pib" onclick="showPrintModal(${o.id})" title="Imprimir etiqueta">${ico('M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z')}</button>
+        <button class="pib" onclick="showPrintModal(${o.id})" title="Etiqueta">${ico('M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z')}</button>
         <button class="tag rev" onclick="revertEntregue(${o.id})">↩ Entregue</button>
         <button class="tag rev" onclick="revertPago(${o.id})">↩ Pago</button>
-        <button class="ib" onclick="showModal(${o.id})">${ico('M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z')}</button>
+        <button class="ib" onclick="wizardOpen(${o.id})">${ico('M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z')}</button>
         <button class="ib" onclick="deleteOrder(${o.id})">${ico('M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2')}</button>
       </div>
     </div>`;
@@ -557,27 +875,31 @@ function renderOrders(){
   if(q) active=active.filter(o=>o.name.toLowerCase().includes(q)||(o.phone||'').replace(/\D/g,'').includes(q.replace(/\D/g,'')));
   if(sortMode==='alfa') active=active.slice().sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
   else active=active.slice().sort((a,b)=>{ const da=a.deliveryDate||'9999',db=b.deliveryDate||'9999'; return da<db?-1:da>db?1:0; });
+
   if(!active.length){
     el.innerHTML=q?`<div class="empty-state"><div class="empty-icon">🔍</div><p>Nenhum pedido encontrado<br>para "<strong>${q}</strong>".</p></div>`:`<div class="empty-state"><div class="empty-icon">🫙</div><p>Nenhum pedido ativo.<br>Toque em <strong>＋</strong> para criar.</p></div>`;
     return;
   }
-  const totalPotes=active.reduce((s,o)=>s+o.items.reduce((si,i)=>si+i.qty,0),0);
-  const totalVal=active.reduce((s,o)=>s+orderTotal(o),0);
-  const totalKg=active.reduce((s,o)=>s+o.items.reduce((si,i)=>si+(i.qty*prodToKg(i.prod)),0),0);
-  const kgStr=totalKg%1===0?totalKg+'kg':totalKg.toFixed(1)+'kg';
+
+  // Banner — só potes NÃO entregues
+  const naoEntregues = active.filter(o => !o.entregue);
+  const totalPotes = naoEntregues.reduce((s,o)=>s+o.items.reduce((si,i)=>si+i.qty,0),0);
+  const totalVal = active.reduce((s,o)=>s+orderTotal(o),0);
+  const totalKg = naoEntregues.reduce((s,o)=>s+o.items.reduce((si,i)=>si+(i.qty*prodToKg(i.prod)),0),0);
+  const kgStr = totalKg%1===0?totalKg+'kg':totalKg.toFixed(1)+'kg';
   const prodMap={};
-  active.forEach(o=>o.items.forEach(i=>{ prodMap[i.prod]=(prodMap[i.prod]||0)+i.qty; }));
+  naoEntregues.forEach(o=>o.items.forEach(i=>{ prodMap[i.prod]=(prodMap[i.prod]||0)+i.qty; }));
   const potesRows=Object.entries(prodMap).map(([p,q])=>`<span style="font-size:11px;background:rgba(255,255,255,0.5);padding:2px 8px;border-radius:20px;margin:2px">${q}× ${p}</span>`).join('');
-  const banner=`<div style="background:var(--y);border-radius:var(--rad);padding:12px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-    <div>
-      <div style="font-size:10px;color:var(--yd);font-weight:700;margin-bottom:2px;letter-spacing:.5px">${active.length} PEDIDO${active.length>1?'S':''} ATIVOS · ${kgStr}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:4px">${potesRows}</div>
+
+  const banner = totalPotes > 0 ? `<div style="background:var(--y);border-radius:var(--rad);padding:12px 14px;margin-bottom:12px">
+    <div style="font-size:10px;color:var(--yd);font-weight:700;margin-bottom:6px;letter-spacing:.5px">🫙 PRODUZIR AGORA — ${totalPotes} POTE${totalPotes>1?'S':''} · ${kgStr}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">${potesRows}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(0,0,0,0.08);padding-top:8px">
+      <span style="font-size:11px;color:var(--yd)">${active.length} pedido${active.length>1?'s':''} ativos</span>
+      <span style="font-size:14px;font-weight:700;color:#5C3A00">${fmt(totalVal)}</span>
     </div>
-    <div>
-      <div style="font-size:10px;color:var(--yd);font-weight:700;margin-bottom:2px;letter-spacing:.5px">TOTAL</div>
-      <div style="font-size:14px;font-weight:700;color:#5C3A00;line-height:1">${fmt(totalVal)}</div>
-    </div>
-  </div>`;
+  </div>` : `<div style="background:var(--gl);border-radius:var(--rad);padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--g);font-weight:600">✓ Todos os potes já foram entregues!</div>`;
+
   el.innerHTML=banner+active.map(o=>renderOrderCard(o,true)).join('');
 }
 
@@ -669,8 +991,8 @@ function renderConfig(){
       </div>
     </div>`).join('')+
     `<div class="backup-section">
-      <div class="settings-title">Backup e restauração</div>
-      <div class="info-box">☁️ Seus dados são salvos automaticamente no Supabase. Use o backup para ter uma cópia local extra.</div>
+      <div class="settings-title">Backup</div>
+      <div class="info-box">☁️ Dados salvos automaticamente no Supabase. Use o backup para ter uma cópia local extra.</div>
       <button class="backup-btn primary" onclick="exportBackup()">
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Exportar backup (JSON)
@@ -680,19 +1002,16 @@ function renderConfig(){
         Importar backup
       </button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(this)">
-    </div>
-    <div style="height:20px"></div>`;
+    </div><div style="height:20px"></div>`;
 }
 
-// ─── BACKUP ───────────────────────────────────────────────
 function exportBackup(){
   const data={version:1,exportedAt:new Date().toLocaleString('pt-BR'),orders,prices,nextId};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url; a.download=`maionese-da-sol-backup-${new Date().toISOString().split('T')[0]}.json`; a.click();
-  URL.revokeObjectURL(url);
-  toast('Backup exportado!');
+  a.href=url; a.download=`maionese-backup-${new Date().toISOString().split('T')[0]}.json`; a.click();
+  URL.revokeObjectURL(url); toast('Backup exportado!');
 }
 
 async function importBackup(input){
@@ -705,235 +1024,68 @@ async function importBackup(input){
       if(!confirm(`Importar backup de ${data.exportedAt||'data desconhecida'}?\n\nIsso irá substituir todos os dados atuais.`)) return;
       orders=data.orders; prices=data.prices; nextId=data.nextId||1;
       await persistOrders(); await persistPrices();
-      toast('Backup importado!');
-      renderOrders(); renderConfig();
+      toast('Backup importado!'); renderOrders(); renderConfig();
     } catch(err){ toast('Erro ao ler o arquivo!'); }
   };
-  reader.readAsText(file);
-  input.value='';
+  reader.readAsText(file); input.value='';
 }
 
-// ─── TOAST ────────────────────────────────────────────────
 function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// ─── BLUETOOTH + PROTOCOLO NIIMBOT ──────────────────────────
-// Protocolo baseado em: https://printers.niim.blue/interfacing/proto/
-// Sequência D110/B21_V1 compatível com XD 210X
+// ─── BLUETOOTH ────────────────────────────────────────────
+const SERVICE_UUID='e7810a71-73ae-499d-8c15-faa9aef0c3f2';
+const CHAR_UUID='bef8d6c9-9c21-4c9e-b632-bd58c1009f9f';
+let btDevice=null,btChar=null,btState='disconnected';
 
-const SERVICE_UUID = 'e7810a71-73ae-499d-8c15-faa9aef0c3f2';
-const CHAR_UUID    = 'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f';
-
-let btDevice = null, btChar = null, btState = 'disconnected';
-
-function setBtState(s) {
-  btState = s;
-  const dot = document.getElementById('bt-dot');
-  if (!dot) return;
-  dot.className = 'bt-dot' + (s==='connected'?' connected': s==='connecting'?' connecting':'');
-  document.getElementById('bt-btn').title =
-    s==='connected' ? 'Impressora conectada — clique para desconectar' :
-    s==='connecting'? 'Conectando…' : 'Conectar impressora';
+function setBtState(s){
+  btState=s;
+  const dot=document.getElementById('bt-dot'); if(!dot) return;
+  dot.className='bt-dot'+(s==='connected'?' connected':s==='connecting'?' connecting':'');
 }
 
-async function toggleBluetooth() {
-  if (btState === 'connected') {
-    try { await btDevice?.gatt?.disconnect(); } catch(e) {}
-    btDevice = null; btChar = null; setBtState('disconnected');
-    toast('Impressora desconectada'); return;
+async function toggleBluetooth(){
+  if(btState==='connected'){
+    try{ await btDevice?.gatt?.disconnect(); }catch(e){}
+    btDevice=null; btChar=null; setBtState('disconnected'); toast('Impressora desconectada'); return;
   }
-  if (!navigator.bluetooth) { toast('Use o Chrome para conectar a impressora.'); return; }
-  try {
+  if(!navigator.bluetooth){ toast('Use o Chrome para conectar.'); return; }
+  try{
     setBtState('connecting');
-    btDevice = await navigator.bluetooth.requestDevice({
-      filters: [{ services: [SERVICE_UUID] }],
-      optionalServices: [SERVICE_UUID]
-    });
-    btDevice.addEventListener('gattserverdisconnected', () => {
-      btDevice = null; btChar = null; setBtState('disconnected'); toast('Impressora desconectada');
-    });
-    const server = await btDevice.gatt.connect();
-    const svc    = await server.getPrimaryService(SERVICE_UUID);
-    btChar       = await svc.getCharacteristic(CHAR_UUID);
+    btDevice=await navigator.bluetooth.requestDevice({ filters:[{services:[SERVICE_UUID]}], optionalServices:[SERVICE_UUID] });
+    btDevice.addEventListener('gattserverdisconnected',()=>{ btDevice=null; btChar=null; setBtState('disconnected'); toast('Impressora desconectada'); });
+    const server=await btDevice.gatt.connect();
+    const svc=await server.getPrimaryService(SERVICE_UUID);
+    btChar=await svc.getCharacteristic(CHAR_UUID);
     await btChar.startNotifications();
-    btChar.addEventListener('characteristicvaluechanged', e => {
-      const d = new Uint8Array(e.target.value.buffer);
-      const hex = Array.from(d).map(b=>b.toString(16).padStart(2,'0')).join(' ');
-      console.log('BT<', hex);
-    });
-
-    // Handshake: comando Connect (0xC1)
-    try {
-      const connectPkt = makePacket(0xC1, [0x01]);
-      await btChar.writeValueWithoutResponse(connectPkt);
-      await delay(300);
-      btLog('→ handshake C1 enviado');
-    } catch(e) { console.warn('Handshake falhou:', e); }
-
     setBtState('connected');
-    toast('✓ Impressora pronta: ' + (btDevice.name || 'Niimbot'));
-  } catch(e) {
+    toast('✓ Impressora conectada: '+(btDevice.name||'Impressora'));
+  }catch(e){
     setBtState('disconnected');
-    if (e.name !== 'NotFoundError') toast('Erro ao conectar: ' + e.message);
-    console.error('BT erro:', e);
+    if(e.name!=='NotFoundError') toast('Erro: '+e.message);
   }
 }
 
-// Monta pacote: 55 55 [CMD] [LEN] [DATA...] [XOR] AA AA
-function makePacket(cmd, data) {
-  const len = data.length;
-  let xor = cmd ^ len;
-  for (const b of data) xor ^= b;
-  const pkt = new Uint8Array(6 + len);
-  pkt[0]=0x55; pkt[1]=0x55; pkt[2]=cmd; pkt[3]=len;
-  for (let i=0; i<len; i++) pkt[4+i] = data[i];
-  pkt[4+len] = xor; pkt[5+len] = 0xAA;
-  return pkt;
-}
+// ─── PRINT ────────────────────────────────────────────────
+let printOrderId=null;
 
-// Envia em chunks de 20 bytes (limite BLE)
-async function sendPacket(pkt) {
-  if (!btChar) throw new Error('Sem conexão Bluetooth');
-  const hex = Array.from(pkt).map(b=>b.toString(16).padStart(2,'0')).join(' ');
-  console.log('BT>', hex);
-  const CHUNK = 20;
-  for (let i=0; i<pkt.length; i+=CHUNK) {
-    await btChar.writeValueWithoutResponse(pkt.slice(i, i+CHUNK));
-    await delay(8);
-  }
-}
-
-const delay = ms => new Promise(r => setTimeout(r, ms));
-
-// IDs corretos do protocolo Niimbot
-const CMD = {
-  PrintStart:     0x01,
-  PageStart:      0x03,
-  SetPageSize:    0x13,
-  SetDensity:     0x21,
-  SetLabelType:   0x23,
-  PrintBitmapRow: 0x85,
-  PrintEmptyRow:  0x84,
-  PageEnd:        0xe3,
-  PrintEnd:       0xf3,
-};
-
-async function cmd_SetDensity(d=3)    { await sendPacket(makePacket(CMD.SetDensity,    [d]));     await delay(60); }
-async function cmd_SetLabelType(t=1)  { await sendPacket(makePacket(CMD.SetLabelType,  [t]));     await delay(60); }
-async function cmd_PrintStart() {
-  // Tenta formato de 7 bytes (B1 e modelos 2024+): totalPages(u16) + 4zeros + pageColor
-  await sendPacket(makePacket(CMD.PrintStart, [0x00,0x01,0x00,0x00,0x00,0x00,0x00]));
-  await delay(150);
-}
-async function cmd_PageStart()        { await sendPacket(makePacket(CMD.PageStart,     [0x01]));  await delay(60); }
-async function cmd_SetPageSize(r,c)   {
-  // 6 bytes: rows(u16) + cols(u16) + copies(u16)
-  await sendPacket(makePacket(CMD.SetPageSize, [r>>8,r&0xFF,c>>8,c&0xFF,0x00,0x01]));
-  await delay(120);
-}
-async function cmd_PageEnd()          { await sendPacket(makePacket(CMD.PageEnd,        [0x01]));  await delay(250); }
-async function cmd_PrintEnd()         { await sendPacket(makePacket(CMD.PrintEnd,       [0x01]));  await delay(250); }
-
-async function cmd_BitmapRow(rowNum, rowData) {
-  const d = new Uint8Array(6 + rowData.length);
-  d[0]=rowNum>>8; d[1]=rowNum&0xFF; d[2]=1; // row, repeat
-  d[3]=0; d[4]=0; d[5]=0;                   // black pixel count (zeros OK)
-  d.set(rowData, 6);
-  await sendPacket(makePacket(CMD.PrintBitmapRow, d));
-}
-
-async function cmd_EmptyRow(rowNum) {
-  await sendPacket(makePacket(CMD.PrintEmptyRow, [rowNum>>8, rowNum&0xFF, 1]));
-}
-
-// ─── GERAÇÃO DA ETIQUETA ──────────────────────────────────
-// XD 210X: 50mm×30mm @203dpi ≈ 400×240px | printhead = 384px cols
-const PRINT_COLS = 384;
-const PRINT_ROWS = 240;
-
-async function renderLabelCanvas(sabor, prodDateStr) {
-  const valDate = fmtDateBR(addDays(prodDateStr, 7));
-  const prodFmt = fmtDateBR(prodDateStr);
-  const canvas  = document.createElement('canvas');
-  canvas.width  = PRINT_COLS; canvas.height = PRINT_ROWS;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,PRINT_COLS,PRINT_ROWS);
-  ctx.fillStyle = '#000';
-  ctx.font = 'bold 30px monospace'; ctx.textAlign = 'center';
-  ctx.fillText('MAIONESE DA SOL', PRINT_COLS/2, 42);
-  ctx.fillText('(' + sabor + ')', PRINT_COLS/2, 78);
-  ctx.fillRect(10, 90, PRINT_COLS-20, 2);
-  ctx.font = '25px monospace'; ctx.textAlign = 'left';
-  ctx.fillText('PRODUCAO: ' + prodFmt, 14, 135);
-  ctx.fillText('VALIDADE: ' + valDate,  14, 172);
-  return canvas;
-}
-
-function canvasTo1bit(canvas) {
-  const ctx      = canvas.getContext('2d');
-  const px       = ctx.getImageData(0,0,canvas.width,canvas.height).data;
-  const rowBytes = Math.ceil(canvas.width/8);
-  const buf      = new Uint8Array(canvas.height * rowBytes);
-  for (let y=0; y<canvas.height; y++) {
-    for (let x=0; x<canvas.width; x++) {
-      const i = (y*canvas.width+x)*4;
-      if (px[i]*0.299 + px[i+1]*0.587 + px[i+2]*0.114 < 128)
-        buf[y*rowBytes + Math.floor(x/8)] |= (0x80 >> (x%8));
-    }
-  }
-  return buf;
-}
-
-async function printLabel(sabor, prodDateStr) {
-  const canvas   = await renderLabelCanvas(sabor, prodDateStr);
-  const bitmap   = canvasTo1bit(canvas);
-  const rows     = PRINT_ROWS;
-  const cols     = PRINT_COLS;
-  const rowBytes = Math.ceil(cols/8);
-
-  console.log('Print:', cols+'x'+rows+'px');
-
-  await cmd_SetDensity(3);
-  await cmd_SetLabelType(1);
-  await cmd_PrintStart();
-  await cmd_PageStart();
-  await cmd_SetPageSize(rows, cols);
-
-  for (let y=0; y<rows; y++) {
-    const row = bitmap.slice(y*rowBytes, (y+1)*rowBytes);
-    if (row.some(b => b !== 0)) await cmd_BitmapRow(y, row);
-    else await cmd_EmptyRow(y);
-    if (y % 30 === 0) await delay(20);
-  }
-
-  await cmd_PageEnd();
-  await cmd_PrintEnd();
-}
-
-// ─── PRINT MODAL ─────────────────────────────────────────
-let printOrderId = null;
-
-function getLabelTypes(order) {
-  const map = {};
-  for (const item of order.items) {
-    const t = item.prod.toLowerCase().includes('frango') ? 'frango' : 'legumes';
-    map[t] = (map[t]||0) + item.qty;
-  }
+function getLabelTypes(order){
+  const map={};
+  for(const item of order.items){ const t=item.prod.toLowerCase().includes('frango')?'frango':'legumes'; map[t]=(map[t]||0)+item.qty; }
   return Object.entries(map).map(([type,qty])=>({type,qty}));
 }
 
-function renderLabelPreviews(prodDateStr) {
-  const order = orders.find(x=>x.id===printOrderId);
-  if (!order) return;
-  const container = document.getElementById('label-previews');
-  if (!prodDateStr) { container.innerHTML='<p style="font-size:13px;color:var(--mt);text-align:center">Selecione a data de produção.</p>'; return; }
-  const valDate = fmtDateBR(addDays(prodDateStr,7));
-  const prodFmt = fmtDateBR(prodDateStr);
-  container.innerHTML = getLabelTypes(order).map(({type,qty}) => {
-    const sabor = type==='frango' ? 'FRANGO' : 'LEGUMES';
+function renderLabelPreviews(prodDateStr){
+  const order=orders.find(x=>x.id===printOrderId); if(!order) return;
+  const container=document.getElementById('label-previews');
+  if(!prodDateStr){ container.innerHTML='<p style="font-size:13px;color:var(--mt);text-align:center">Selecione a data de produção.</p>'; return; }
+  const valDate=fmtDateBR(addDays(prodDateStr,7));
+  const prodFmt=fmtDateBR(prodDateStr);
+  container.innerHTML=getLabelTypes(order).map(({type,qty})=>{
+    const sabor=type==='frango'?'FRANGO':'LEGUMES';
     return `<div class="label-card">
       <div class="label-card-hdr">Etiqueta — ${sabor} · <strong>${qty}×</strong></div>
       <div class="label-visual">
@@ -945,66 +1097,37 @@ function renderLabelPreviews(prodDateStr) {
   }).join('');
 }
 
-function showPrintModal(orderId) {
-  printOrderId = orderId;
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('prod-date').value = today;
+function showPrintModal(orderId){
+  printOrderId=orderId;
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('prod-date').value=today;
   renderLabelPreviews(today);
   document.getElementById('modal-print').classList.add('open');
 }
-function closePrintModal() { document.getElementById('modal-print').classList.remove('open'); printOrderId = null; }
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('prod-date').addEventListener('change', function(){ renderLabelPreviews(this.value); });
+function closePrintModal(){ document.getElementById('modal-print').classList.remove('open'); printOrderId=null; }
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('prod-date').addEventListener('change',function(){ renderLabelPreviews(this.value); });
 });
 
-async function executePrint() {
-  const prodDateStr = document.getElementById('prod-date').value;
-  if (!prodDateStr) { toast('Informe a data de produção'); return; }
-  const order = orders.find(x=>x.id===printOrderId);
-  if (!order) return;
-  const types = getLabelTypes(order);
-
-  // Sem Bluetooth: fallback para janela de impressão
-  if (btState !== 'connected') {
-    const valDate = fmtDateBR(addDays(prodDateStr,7));
-    const prodFmt = fmtDateBR(prodDateStr);
-    const labelsHtml = types.flatMap(({type,qty}) => {
-      const sabor = type==='frango' ? 'FRANGO' : 'LEGUMES';
-      return Array.from({length:qty}, () =>
-        `<div style="width:188px;height:120px;border:1px solid #000;padding:8px;font-family:'Courier New',monospace;box-sizing:border-box;page-break-after:always;display:flex;flex-direction:column;justify-content:center;">
-          <div style="font-size:10px;font-weight:700;text-align:center;border-bottom:1px solid #000;padding-bottom:3px;margin-bottom:5px;">MAIONESE DA SOL (${sabor})</div>
-          <div style="font-size:9px;margin:2px 0;">PRODUCAO: <b>${prodFmt}</b></div>
-          <div style="font-size:9px;margin:2px 0;">VALIDADE: <b>${valDate}</b></div>
-        </div>`
-      );
-    }).join('');
-    const w = window.open('','_blank','width=400,height=500');
-    w.document.write(`<html><head><title>Etiquetas</title><style>body{margin:8px;background:#fff}@media print{body{margin:0}}</style></head><body>${labelsHtml}<script>window.onload=()=>window.print();<\/script></body></html>`);
-    w.document.close();
-    closePrintModal(); return;
-  }
-
-  const btn = document.getElementById('btn-do-print');
-  btn.textContent = '⏳ Imprimindo…'; btn.disabled = true;
-  try {
-    let total = 0;
-    for (const {type, qty} of types) {
-      const sabor = type==='frango' ? 'FRANGO' : 'LEGUMES';
-      for (let i=0; i<qty; i++) {
-        await printLabel(sabor, prodDateStr);
-        await delay(500);
-        total++;
-      }
-    }
-    toast(`✓ ${total} etiqueta${total>1?'s':''} enviada${total>1?'s':''}!`);
-    closePrintModal();
-  } catch(e) {
-    console.error('Erro impressão:', e);
-    toast('Erro ao imprimir: ' + e.message);
-  } finally {
-    btn.textContent = '🖨 Imprimir'; btn.disabled = false;
-  }
+async function executePrint(){
+  const prodDateStr=document.getElementById('prod-date').value;
+  if(!prodDateStr){ toast('Informe a data de produção'); return; }
+  const order=orders.find(x=>x.id===printOrderId); if(!order) return;
+  const types=getLabelTypes(order);
+  const valDate=fmtDateBR(addDays(prodDateStr,7));
+  const prodFmt=fmtDateBR(prodDateStr);
+  const labelsHtml=types.flatMap(({type,qty})=>{
+    const sabor=type==='frango'?'FRANGO':'LEGUMES';
+    return Array.from({length:qty},()=>`<div style="width:188px;height:120px;border:1px solid #000;padding:8px;font-family:'Courier New',monospace;box-sizing:border-box;page-break-after:always;display:flex;flex-direction:column;justify-content:center;">
+      <div style="font-size:10px;font-weight:700;text-align:center;border-bottom:1px solid #000;padding-bottom:3px;margin-bottom:5px;">MAIONESE DA SOL (${sabor})</div>
+      <div style="font-size:9px;margin:2px 0;">PRODUCAO: <b>${prodFmt}</b></div>
+      <div style="font-size:9px;margin:2px 0;">VALIDADE: <b>${valDate}</b></div>
+    </div>`);
+  }).join('');
+  const w=window.open('','_blank','width=400,height=500');
+  w.document.write(`<html><head><title>Etiquetas</title><style>body{margin:8px;background:#fff}@media print{body{margin:0}}</style></head><body>${labelsHtml}<script>window.onload=()=>window.print();<\/script></body></html>`);
+  w.document.close();
+  closePrintModal();
 }
 
 // ─── INIT ─────────────────────────────────────────────────
