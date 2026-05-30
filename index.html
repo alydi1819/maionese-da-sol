@@ -251,9 +251,9 @@ select option{background:var(--bg);color:var(--tx)}
     <div class="content" id="orders-list"></div>
   </div>
 
-  <!-- HISTÓRICO -->
+  <!-- FINALIZADOS -->
   <div class="screen" id="screen-historico">
-    <div class="header"><div class="header-logo">🫙</div><span class="header-title">Histórico</span></div>
+    <div class="header"><div class="header-logo">🫙</div><span class="header-title">Finalizados</span></div>
     <div style="padding:12px 16px 0">
       <div style="position:relative;margin-bottom:8px">
         <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--mt);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -284,7 +284,7 @@ select option{background:var(--bg);color:var(--tx)}
     </button>
     <button class="nav-btn" onclick="navTo('historico',this)">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-      Histórico
+      Finalizados
     </button>
     <button class="nav-btn" onclick="navTo('resumo',this)">
       <svg viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>
@@ -878,7 +878,8 @@ function toggleSort(){
 
 function renderOrders(){
   const el=document.getElementById('orders-list');
-  const q=(document.getElementById('search-input')?.value||'').toLowerCase().trim();
+  const searchEl=document.getElementById('search-input');
+  const q=(searchEl?searchEl.value:'').toLowerCase().trim();
   let active=orders.filter(o=>!isDone(o));
   if(q) active=active.filter(o=>o.name.toLowerCase().includes(q)||(o.phone||'').replace(/\D/g,'').includes(q.replace(/\D/g,'')));
   if(sortMode==='alfa') active=active.slice().sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
@@ -1154,6 +1155,8 @@ function showPrintModal(orderId){
 function closePrintModal(){ document.getElementById('modal-print').classList.remove('open'); printOrderId=null; }
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('prod-date').addEventListener('change',function(){ renderLabelPreviews(this.value); });
+  const si=document.getElementById('search-input');
+  if(si) si.addEventListener('input',()=>renderOrders());
 });
 
 async function executePrint(){
