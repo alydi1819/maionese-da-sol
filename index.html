@@ -1173,12 +1173,6 @@ function showPrintModal(orderId){
 function closePrintModal(){ document.getElementById('modal-print').classList.remove('open'); printOrderId=null; }
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('prod-date').addEventListener('change',function(){ renderLabelPreviews(this.value); });
-  const si = document.getElementById('search-input');
-  if(si){
-    ['input','keyup','change'].forEach(ev => {
-      si.addEventListener(ev, ()=>{ dashSearch=si.value; renderOrders(); });
-    });
-  }
 });
 
 async function executePrint(){
