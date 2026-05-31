@@ -239,7 +239,7 @@ select option{background:var(--bg);color:var(--tx)}
     <div class="search-sort-bar">
       <div class="search-wrap">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="search-input" id="search-input" type="text" placeholder="Buscar por nome…" oninput="dashSearch=this.value;renderOrders()" autocomplete="off">
+        <input class="search-input" id="search-input" type="text" placeholder="Buscar por nome…" oninput="dashSearch=this.value;renderOrders()" onkeyup="dashSearch=this.value;renderOrders()" autocomplete="off">
       </div>
       <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
         <svg viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
@@ -1163,6 +1163,12 @@ function showPrintModal(orderId){
 function closePrintModal(){ document.getElementById('modal-print').classList.remove('open'); printOrderId=null; }
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('prod-date').addEventListener('change',function(){ renderLabelPreviews(this.value); });
+  const si = document.getElementById('search-input');
+  if(si){
+    ['input','keyup','change'].forEach(ev => {
+      si.addEventListener(ev, ()=>{ dashSearch=si.value; renderOrders(); });
+    });
+  }
 });
 
 async function executePrint(){
