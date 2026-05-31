@@ -239,7 +239,7 @@ select option{background:var(--bg);color:var(--tx)}
     <div style="padding:12px 16px 0">
       <div style="position:relative;margin-bottom:8px">
         <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--mt);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input id="dash-search-input" style="width:100%;padding:10px 10px 10px 34px;border:.5px solid var(--bd);border-radius:var(--rad-s);font-size:14px;background:var(--bg2);color:var(--tx);font-family:inherit;outline:none" type="text" placeholder="Buscar por nome…" oninput="dashSearch=this.value;renderOrdersList()">
+        <input id="dash-search-input" style="width:100%;padding:10px 10px 10px 34px;border:.5px solid var(--bd);border-radius:var(--rad-s);font-size:14px;background:var(--bg2);color:var(--tx);font-family:inherit;outline:none" type="text" placeholder="Buscar por nome…" oninput="dashSearch=this.value;renderOrdersList()" onkeyup="dashSearch=this.value;renderOrdersList()" onchange="dashSearch=this.value;renderOrdersList()">
       </div>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
         <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
@@ -428,6 +428,11 @@ async function loadAll() {
   document.getElementById('loading-screen').style.display='none';
   document.getElementById('app').style.cssText='display:flex;flex-direction:column';
   renderOrders(); renderHistorico();
+  // Polling fallback: monitora o input de busca caso eventos não disparem
+  setInterval(()=>{
+    const si = document.getElementById('dash-search-input');
+    if(si && si.value !== dashSearch){ dashSearch=si.value; renderOrdersList(); }
+  }, 300);
 }
 
 async function persistOrders() {
