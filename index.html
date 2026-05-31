@@ -236,18 +236,6 @@ select option{background:var(--bg);color:var(--tx)}
       </button>
       <button class="header-action" onclick="wizardOpen(null)">＋</button>
     </div>
-    <div style="padding:12px 16px 0">
-      <div style="position:relative;margin-bottom:8px">
-        <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--mt);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input id="dash-search-input" style="width:100%;padding:10px 10px 10px 34px;border:.5px solid var(--bd);border-radius:var(--rad-s);font-size:14px;background:var(--bg2);color:var(--tx);font-family:inherit;outline:none" type="text" placeholder="Buscar por nome…" oninput="dashSearch=this.value;renderOrdersList()" onkeyup="dashSearch=this.value;renderOrdersList()" onchange="dashSearch=this.value;renderOrdersList()">
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-        <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
-          <svg viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
-          <span id="sort-label">Data</span>
-        </button>
-      </div>
-    </div>
     <div id="sync-status" class="sync-bar"></div>
     <div class="content" id="orders-list"></div>
   </div>
@@ -893,6 +881,14 @@ function toggleSort(){
 }
 
 function renderOrders(){
+  // Injeta o input de busca dentro do content se ainda não existir
+  const el=document.getElementById('orders-list');
+  if(!document.getElementById('dash-search-input')){
+    const wrap=document.createElement('div');
+    wrap.style='padding:0 0 8px 0';
+    wrap.innerHTML=`<div style="position:relative;margin-bottom:8px"><svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--mt);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="dash-search-input" style="width:100%;padding:10px 10px 10px 34px;border:.5px solid var(--bd);border-radius:var(--rad-s);font-size:14px;background:var(--bg2);color:var(--tx);font-family:inherit;outline:none" type="text" placeholder="Buscar por nome…" oninput="dashSearch=this.value;renderOrdersList()"></div><div style="display:flex;gap:8px;margin-bottom:8px"><button class="sort-btn" id="sort-btn" onclick="toggleSort()"><svg viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg><span id="sort-label">Data</span></button></div>`;
+    el.parentElement.insertBefore(wrap, el);
+  }
   renderOrdersList();
 }
 
