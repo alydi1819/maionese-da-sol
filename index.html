@@ -240,7 +240,7 @@ select option{background:var(--bg);color:var(--tx)}
     <div class="search-sort-bar">
       <div class="search-wrap">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="search-input" id="search-input" type="text" placeholder="Buscar por nome…" oninput="renderOrders()" autocomplete="off">
+        <input class="search-input" id="search-input" type="text" placeholder="Buscar por nome…" oninput="dashSearch=this.value;renderOrders()" autocomplete="off">
       </div>
       <button class="sort-btn" id="sort-btn" onclick="toggleSort()">
         <svg viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
@@ -878,8 +878,7 @@ function toggleSort(){
 
 function renderOrders(){
   const el=document.getElementById('orders-list');
-  const searchEl=document.getElementById('search-input');
-  const q=(searchEl?searchEl.value:'').toLowerCase().trim();
+  const q=dashSearch.toLowerCase().trim();
   let active=orders.filter(o=>!isDone(o));
   if(q) active=active.filter(o=>o.name.toLowerCase().includes(q)||(o.phone||'').replace(/\D/g,'').includes(q.replace(/\D/g,'')));
   if(sortMode==='alfa') active=active.slice().sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
@@ -913,6 +912,7 @@ function renderOrders(){
 }
 
 let histSearch='', histPeriod='todos', histMonth='';
+let dashSearch='';
 
 function renderHistorico(){
   // Renderiza os controles estáticos (sem recriar o input de busca)
