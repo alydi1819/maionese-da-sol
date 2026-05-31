@@ -378,14 +378,14 @@ async function sbLoad(id) {
     const { data, error } = await sb.from('sol_data').select('payload').eq('id', id).maybeSingle();
     if (error) throw error;
     return data ? data.payload : null;
-  } catch(e) { console.warn('sbLoad error', e); return null; }
+  } catch(e) { console.warn('sbLoad error', e?.message||e?.code||JSON.stringify(e)); return null; }
 }
 async function sbSave(id, payload) {
   try {
     const { error } = await sb.from('sol_data').upsert({ id, payload, updated_at: new Date().toISOString() });
     if (error) throw error;
     return true;
-  } catch(e) { console.warn('sbSave error', e); return false; }
+  } catch(e) { console.warn('sbSave error', e?.message||e?.code||JSON.stringify(e)); return false; }
 }
 
 // ─── CONSTANTES ───────────────────────────────────────────
