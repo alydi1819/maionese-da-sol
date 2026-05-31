@@ -408,6 +408,7 @@ let prices = {
   'Legumes 1kg':{'Particular':24,'Terceiros':19}
 };
 let orders = [], nextId = 1;
+let dashSearch = '';
 
 function setSyncStatus(state, msg) {
   const el = document.getElementById('sync-status');
@@ -920,7 +921,6 @@ function renderOrders(){
 }
 
 let histSearch='', histPeriod='todos', histMonth='';
-let dashSearch='';
 
 function renderHistorico(){
   // Renderiza os controles estáticos (sem recriar o input de busca)
