@@ -371,7 +371,7 @@ select option{background:var(--bg);color:var(--tx)}
 // ─── SUPABASE ─────────────────────────────────────────────
 const SUPABASE_URL = 'https://thrgkennnvqdovfuwixv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRocmdrZW5ubnZxZG92ZnV3aXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMTMwMzMsImV4cCI6MjA5NTY4OTAzM30.iZoAgtO_HRGqeAciqV5KjqEhWjh1IAqvwSy_--Lym4A';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
 
 async function sbLoad(id) {
   try {
